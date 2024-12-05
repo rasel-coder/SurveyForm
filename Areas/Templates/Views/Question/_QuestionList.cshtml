@@ -1,0 +1,101 @@
+﻿@model IEnumerable<SurveyForm.ViewModels.QuestionViewModel>
+
+@{
+	var questionTypes = new Dictionary<int, string>
+	{
+		{ 1, "Single Line" },
+		{ 2, "Multiple Line" },
+		{ 3, "Positive Integer" },
+		{ 4, "Checkbox" }
+	};
+}
+
+<style>
+	.ui-state-default {
+		border-radius: 7px;
+	}
+</style>
+@if (Model != null && Model.Any())
+{
+
+	<ul class="p-0 m-0 sortQuestionList">
+		<li class="ui-state-default ui-sortable-handle d-flex p-2 mb-2">
+			<p style="width: 65%;" class="m-0 fw-bold"># Question Title</p>
+			<p style="width: 15%;" class="m-0 fw-bold">Question Type</p>
+			<p style="width: 10%;" class="m-0 fw-bold text-center">Is Displayed</p>
+			@if (ViewBag.TemplateStatus != "Read-Only")
+			{
+				<p style="width: 10%;" class="m-0 fw-bold text-end">Actions</p>
+			}
+		</li>
+		@foreach (var data in Model)
+		{
+			var checkbox = data.IsDisplayed ? "checked" : "";
+			var questionType = questionTypes[int.Parse(data.QuestionType)];
+
+			<li class="ui-state-default ui-sortable-handle d-flex align-items-center p-2 bg-white mb-2" data-question-id="@data.QuestionId" data-display-order="@data.DisplayOrder">
+				<p style="width: 65%;"><i class='bx bx-menu me-2'></i>@data.QuestionTitle</p>
+				<p style="width: 15%;">@questionType</p>
+				<div style="width: 10%; text-align: center;">
+					<input type="checkbox" @checkbox class="form-check-input" disabled />
+				</div>
+				@if (ViewBag.TemplateStatus != "Read-Only")
+				{
+					<div style="width: 10%">
+						<div class="float-end">
+							<button class="btn btn-sm btn-secondary saveQuestionBtn"
+									data-url="@Url.Action("SaveQuestion", "Question", new { area = "Templates", questionId = data.QuestionId, templateId = data.TemplateId })">
+								<i class='bx bx-edit'></i>
+							</button>
+
+							<button type="button" class="btn btn-sm btn-danger"
+									data-bs-toggle="modal"
+									data-bs-target="#question_delete_modal"
+									onclick="deleteQuestionConfirmation(@data.TemplateId, @data.QuestionId, '@data.QuestionTitle')">
+								<i class='bx bx-trash'></i>
+							</button>
+						</div>
+					</div>
+				}
+			</li>
+		}
+	</ul>
+}
+else
+{
+	<div class="alert alert-warning text-center mt-5 mb-5">
+		No questions available at the moment.
+	</div>
+}
+
+<div class="modal fade" id="question_delete_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		@using (Html.BeginForm("DeleteQuestion", "Question", FormMethod.Post, new { area = "Templates" }))
+		{
+			<input type="hidden" name="TemplateId" id="delete_modal_template_id" />
+			<input type="hidden" name="QuestionId" id="delete_modal_question_id" />
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabel">Delete Question</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-4 text-center">
+							<img src="~/images/delete.png" class="w-75" />
+						</div>
+						<div class="col-md-8 d-flex flex-column justify-content-center">
+							<p class="mb-2">Are you sure want to delete this question?</p>
+							<p>Question Name</p>
+							<strong id="delete_modal_question_title"></strong>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="submit" class="btn btn-danger">Yes</button>
+				</div>
+			</div>
+		}
+	</div>
+</div>

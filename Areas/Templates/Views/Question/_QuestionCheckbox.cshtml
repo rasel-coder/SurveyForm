@@ -1,0 +1,11 @@
+﻿@using static SurveyForm.Utility.Enums
+@model SurveyForm.ViewModels.QuestionViewModel
+
+<div class="form-control mb-3">
+	@foreach (var option in Model.QuestionOptions)
+	{
+		@Html.RadioButtonFor(x => x.SelectedOptionId, option.QuestionOptionId, new { id = "option_" + option.QuestionOptionId, @class = "form-check-input" })
+		<label class="form-label m-0 ms-3" for="option_@option.QuestionOptionId">@option.OptionName</label>
+		<br />
+	}
+</div>

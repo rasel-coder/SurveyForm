@@ -1,0 +1,46 @@
+{
+  "version": "3.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "jqueryui@1.14.1",
+      "destination": "wwwroot/lib/jqueryui/",
+      "files": [
+        "jquery-ui.min.js",
+        "jquery-ui.js",
+        "themes/base/jquery-ui.css",
+        "themes/base/jquery-ui.min.css"
+      ]
+    },
+    {
+      "library": "tagify@4.32.1",
+      "destination": "wwwroot/lib/tagify/"
+    },
+    {
+      "library": "quill@2.0.2",
+      "destination": "wwwroot/lib/quill/",
+      "files": [
+        "quill.min.js",
+        "quill.snow.css",
+        "quill.snow.min.css",
+        "quill.js"
+      ]
+    },
+    {
+      "library": "dropzone@5.9.3",
+      "destination": "wwwroot/lib/dropzone/",
+      "files": [
+        "dropzone.min.js",
+        "min/dropzone.min.css",
+        "min/dropzone.min.js",
+        "dropzone.css",
+        "dropzone.js",
+        "dropzone.min.css"
+      ]
+    },
+    {
+      "library": "boxicons@2.1.4",
+      "destination": "wwwroot/lib/boxicons/"
+    }
+  ]
+}

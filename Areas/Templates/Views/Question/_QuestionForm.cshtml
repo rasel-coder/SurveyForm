@@ -1,0 +1,73 @@
+﻿@using Newtonsoft.Json
+@using System.ComponentModel.DataAnnotations
+@using static SurveyForm.Utility.Enums
+@model SurveyForm.ViewModels.QuestionViewModel
+
+@{
+
+}
+
+<div class="modal fade" id="questionModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form asp-action="SaveQuestion" asp-controller="Question" asp-area="Templates">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="questionModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <input type="hidden" asp-for="TemplateId" />
+                    <input type="hidden" asp-for="QuestionId" />
+
+                    <div class="form-control mb-3">
+                        @Html.LabelFor(x => x.QuestionTitle, new { @class = "form-label m-0 color-gray", @for = "questionTitle" })
+                        @Html.EditorFor(x => x.QuestionTitle, new { htmlAttributes = new { placeholder = "Which programming language do you like?", id = "questionTitle", @class = "form-control border-0 p-0 text-black", required = "required" } })
+                        @Html.ValidationMessageFor(x => x.QuestionTitle, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-control mb-3">
+                        @Html.LabelFor(x => x.QuestionType, new { @class = "form-label m-0 color-gray", @for = "questionType" })
+                        @Html.DropDownListFor(model => model.QuestionType,
+                                 new SelectList(Enum.GetValues(typeof(TemplateQuestionTypeEnum))
+                                 .Cast<TemplateQuestionTypeEnum>()
+                                 .Select(q => new
+                                 {
+                                     Id = (int)q,
+                                     Name = q.GetType()
+                                         .GetField(q.ToString()).GetCustomAttributes(typeof(DisplayAttribute), false)
+                                         .Cast<DisplayAttribute>().FirstOrDefault()?.Name ?? q.ToString()
+                                 }), "Id", "Name"),
+                                 "-- Select question type --",
+                                 new { @class = "form-control border-0 p-0 text-black", id = "questionType", onchange = "questionTypeEvent(this)" })
+
+                        @Html.ValidationMessageFor(x => x.QuestionType, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div id="question_checkbox_placeholder">
+                        @if (Model != null && Model.QuestionType != null && int.Parse(Model.QuestionType) == 4)
+                        {
+                            <partial name="~/Areas/Templates/Views/Question/_QuestionCheckbox.cshtml" model="Model" />
+                        }
+                    </div>
+
+                    <div class="form-control mb-3">
+                        @Html.LabelFor(x => x.Description, new { @class = "form-label m-0 color-gray", @for = "questionDescription" })
+                        @Html.TextAreaFor(x => x.Description, new { placeholder = "Berif about the popular programming languages.", id = "questionDescription", @class = "form-control border-0 p-0 text-black" })
+                    </div>
+
+                    <div class="mb-3">
+                        @Html.CheckBoxFor(x => x.IsDisplayed, new { id = "isDisplayed", @class = "form-check-input" })
+                        @Html.LabelFor(x => x.IsDisplayed, new { @class = "form-label m-0 ms-3", @for = "isDisplayed" })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/js/site.js"></script>

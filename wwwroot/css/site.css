@@ -1,0 +1,131 @@
+p {
+    margin: 0;
+}
+
+.toggle-password {
+    cursor: pointer;
+}
+
+.color-gray {
+    color: #b6b6b6;
+}
+
+.disabled-row td:not(:first-child) {
+    color: #6c757d;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.disabled-row td input {
+    pointer-events: auto;
+}
+
+.ql-toolbar.ql-snow {
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.form-control:focus {
+    box-shadow: none;
+}
+
+.ql-toolbar.ql-snow {
+    border-color: #ededed;
+}
+
+.advance-options .tagify__tag {
+    --tag-hover: var(--tag-bg);
+}
+
+
+
+
+
+
+
+.upload {
+    position: relative;
+    display: block;
+    border: 1px solid black;
+    background-color: #ecedee;
+    padding: 3em;
+    margin: 1em auto;
+    border-radius: 4px;
+}
+
+    .upload label {
+        border-bottom: 1px solid #ccc;
+        padding: 1em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.3em;
+    }
+
+    .upload:hover {
+        background-color: #86b7fe;
+    }
+
+    .upload input {
+        position: absolute;
+        opacity: 0;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        padding: 0;
+    }
+
+#names li {
+    margin: 1em;
+}
+
+.dropzone .dz-preview {
+    margin: 0;
+    height: 148px;
+}
+
+    .dropzone .dz-preview .dz-image {
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+    }
+
+    .dropzone .dz-preview .dz-image img {
+        width: 100%;
+        height: auto;
+    }
+
+    .dropzone .dz-preview .dz-remove {
+        position: relative;
+        top: -199px;
+        left: 28px;
+        background: #d10000;
+        padding: 5px;
+        border-radius: 5px;
+        color: #FFF;
+        text-decoration: none;
+        display: flex;
+        width: 70px;
+        justify-content: center;
+    }
+
+
+/* ---------------- Tagify - Template Specified User --------------- */
+.customSuggestionsList > div {
+    max-height: 300px;
+    min-height: 50px;
+    border: 2px solid pink;
+    overflow: auto;
+}
+
+.customSuggestionsList .empty {
+    color: #999;
+    font-size: 20px;
+    text-align: center;
+    padding: 1em;
+}

@@ -1,0 +1,58 @@
+﻿@using Newtonsoft.Json
+@model SurveyForm.ViewModels.SaveTemplateViewModel
+
+@{
+
+}
+
+<ul class="nav nav-tabs" id="templateTab" role="tablist">
+	<li class="nav-item" role="presentation">
+		<a class="nav-link @((Model.ActiveTab == "Setup") ? "active" : "")" id="template-setup-tab" data-bs-toggle="tab" href="#template-setup" role="tab" aria-controls="template-setup" aria-selected="true">Setup</a>
+	</li>
+	<li class="nav-item" role="presentation">
+		<a class="nav-link @((Model.ActiveTab == "Questions") ? "active" : "")" id="template-question-tab" data-bs-toggle="tab" href="#template-question" role="tab" aria-controls="template-question" aria-selected="false">Questions</a>
+	</li>
+</ul>
+
+<div class="tab-content" id="templateTabBody">
+	<input type="hidden" asp-for="TemplateId" class="templateId" />
+
+	<div class="tab-pane fade @((Model.ActiveTab == "Setup") ? "show active" : "")" id="template-setup" role="tabpanel" aria-labelledby="template-setup-tab">
+		<div class="pt-3 pb-3">
+			<partial name="~/Areas/Templates/Views/Template/_TemplateSetupForm.cshtml" model="@Model?.Template" />
+		</div>
+	</div>
+
+	<div class="tab-pane fade @((Model.ActiveTab == "Questions") ? "show active" : "")" id="template-question" role="tabpanel" aria-labelledby="template-question-tab">
+		<div class="pt-3 pb-3">
+			<button class="btn btn-outline-success saveQuestionBtn"
+					data-url="@Url.Action("SaveQuestion", "Question", new { area = "Templates", questionId = 0, templateId = Model.TemplateId })">
+				Add New Question
+			</button>
+		</div>
+		<div id="question_list_sortable_placeholder">
+			<partial name="~/Areas/Templates/Views/Question/_QuestionList.cshtml" model="@Model?.Questions" />
+		</div>
+	</div>
+</div>
+
+<div id="addQuestion_modal_placeholder"></div>
+
+@section Scripts {
+	<script>
+		var templateSpecificTags = @Html.Raw(JsonConvert.SerializeObject(@Model.Template.Tags));
+		templateTag(templateSpecificTags);
+
+		var content = @Html.Raw(JsonConvert.SerializeObject(@Model.Template.Description));
+		quillEditor(content);
+
+		imageDropZone('@Model.Template.Image');
+
+		var tagsFromServer = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Tags));
+		templateTagSetup(tagsFromServer);
+		updatePlaceholderByTagsCount()
+
+		var usersFromServer = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Users));
+		templateSpecificUsers(usersFromServer);
+	</script>
+}
