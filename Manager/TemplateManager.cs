@@ -40,6 +40,19 @@ namespace SurveyForm.Manager
             }
         }
 
+        public async Task<List<TemplateViewModel>> GetSearchedTemplatesAsync(string search)
+        {
+            try
+            {
+                var templates = await templateRepository.GetSearchedTemplates(search);
+                return mapper.Map<List<TemplateViewModel>>(templates);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<List<TemplateViewModel>> GetAllTemplateByUserIdAsync(string id)
         {
             try

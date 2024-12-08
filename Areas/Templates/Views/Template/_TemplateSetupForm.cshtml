@@ -53,10 +53,6 @@
 				@Html.LabelFor(x => x.AccessMode, new { @class = "form-label m-0 mb-4 color-gray" })
 				<br />
 
-				@Html.RadioButtonFor(x => x.AccessMode, Enums.TemplateSpecificUser.Only_Me.ToString(), new { id = "option_only_me", @class = "form-check-input access-mode", @checked = "checkek" })
-				<label class="form-label m-0 ms-3 mb-2" for="option_only_me">Only Me</label>
-				<br />
-
 				@Html.RadioButtonFor(x => x.AccessMode, Enums.TemplateSpecificUser.Authenticated_User.ToString(), new { id = "option_authenticated_users", @class = "form-check-input access-mode" })
 				<label class="form-label m-0 ms-3 mb-2" for="option_authenticated_users">Authenticated Users</label>
 				<br />

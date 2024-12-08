@@ -1,0 +1,31 @@
+﻿@model List<SurveyForm.ViewModels.TemplateViewModel>
+
+@if (Model != null && Model.Any())
+{
+	<div class="row">
+		@foreach (var template in Model)
+		{
+			<div class="col-md-6">
+				<div class="card mb-3">
+					<div class="row g-0">
+						<div class="col-md-4">
+							<img src="@template.Image" class="img-fluid rounded-start" style="height: 200px;" alt="Template Image">
+						</div>
+						<div class="col-md-8">
+							<div class="card-body position-relative h-100">
+								<h5 class="card-title">@template.Title</h5>
+								@Html.Raw(@template.Description)
+
+								<div class="float-end position-relative">
+									<button type="button" class="btn btn-sm btn-primary"><i class='bx bx-edit'></i></button>
+									<button type="button" class="btn btn-sm btn-secondary"><i class='bx bx-edit'></i></button>
+									<button type="button" class="btn btn-sm btn-danger"><i class='bx bx-trash'></i></button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+}

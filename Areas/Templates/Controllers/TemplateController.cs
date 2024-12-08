@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SurveyForm.Data;
 using SurveyForm.Utility;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace SurveyForm.Areas.Templates.Controllers;
 
@@ -148,5 +150,19 @@ public class TemplateController : Controller
             return Json(new { filePath = "/uploads/" + file.FileName });
         }
         return BadRequest("Invalid file.");
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> SearchTemplate(string search)
+    {
+        if (string.IsNullOrEmpty(search))
+        {
+            var templates = await templateManager.GettAllTemplateAsync();
+            return PartialView("~/Views/Home/_LatestTemplate.cshtml", templates);
+        }
+
+        var results = await templateManager.GetSearchedTemplatesAsync(search);
+        return PartialView("~/Views/Home/_LatestTemplate.cshtml", results);
     }
 }

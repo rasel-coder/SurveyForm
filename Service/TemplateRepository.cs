@@ -2,6 +2,7 @@
 using SurveyForm.Models;
 using Microsoft.EntityFrameworkCore;
 using SurveyForm.Utility;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace SurveyForm.Repository
 {
@@ -18,7 +19,24 @@ namespace SurveyForm.Repository
         {
             try
             {
-                return await context.Templates.ToListAsync();
+                return await context.Templates.OrderByDescending(x => x.TemplateId).ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<Template>> GetSearchedTemplates(string search)
+        {
+            try
+            {
+                return await context.Templates
+                    .Where(t => t.Title.Contains(search) ||
+                        t.Description.Contains(search) ||
+                        t.Tags.Contains(search))
+                    .OrderByDescending(x => x.TemplateId)
+                    .ToListAsync();
             }
             catch (Exception)
             {

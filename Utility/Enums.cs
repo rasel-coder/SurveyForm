@@ -28,13 +28,10 @@ public static class Enums
 
     public enum TemplateSpecificUser
     {
-        [Display(Name = "Only Me")]
-        Only_Me = 1,
-
         [Display(Name = "Authenticated Users")]
-        Authenticated_User = 2,
+        Authenticated_User = 1,
 
         [Display(Name = "Specified Users")]
-        Specified_User = 3,
+        Specified_User = 2,
     }
 }

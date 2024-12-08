@@ -32,7 +32,7 @@ public partial class TemplateViewModel
     public string Image { get; set; } = null!;
 
     [Display(Name = "Access Mode")]
-    public string AccessMode { get; set; } = Enums.TemplateSpecificUser.Only_Me.ToString();
+    public string AccessMode { get; set; } = Enums.TemplateSpecificUser.Authenticated_User.ToString();
 
     public string CreatedBy { get; set; } = null!;
 

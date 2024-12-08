@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using SurveyForm.Manager;
 using SurveyForm.Models;
 
 namespace SurveyForm.Controllers
@@ -7,15 +8,19 @@ namespace SurveyForm.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly TemplateManager _templateManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> _logger
+            , TemplateManager _templateManager)
         {
-            _logger = logger;
+            this._logger = _logger;
+            this._templateManager = _templateManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var templates = await _templateManager.GettAllTemplateAsync();
+            return View(templates);
         }
 
         public IActionResult Privacy()

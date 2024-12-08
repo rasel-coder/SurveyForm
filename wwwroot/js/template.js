@@ -37,3 +37,15 @@ function deleteQuestionConfirmation(TemplateId, QuestionId, QuestionTitle) {
     $('#delete_modal_question_id').val(QuestionId);
     $('#delete_modal_question_title').html(QuestionTitle);
 }
+
+$('#searchBox').on('input', function () {
+    const search = $(this).val();
+    $.ajax({
+        url: `/Templates/Template/SearchTemplate?search=${search}`,
+        method: 'GET',
+        success: function (data) {
+            $('#results').empty();
+            $('#results').html(data);
+        }
+    });
+});
