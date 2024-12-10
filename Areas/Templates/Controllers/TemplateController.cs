@@ -96,27 +96,39 @@ public class TemplateController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    //[AllowAnonymous]
+    //public async Task<IActionResult> Details(int id)
+    //{
+    //    var template = await templateManager.GetTemplateByIdAsync(id);
+    //    var comments = await templateManager.GetCommentsByTemplateIdAsync(id);
+    //    var likes = await templateManager.GetLikesByTemplateIdAsync(id);
+
+    //    var templateDetailsViewModel = new TemplateDetailsViewModel
+    //    {
+    //        Template = template,
+    //        Comments = comments,
+    //        LikesCount = likes.Count
+    //    };
+
+    //    return View(templateDetailsViewModel);
+    //}
+
     [AllowAnonymous]
-    public async Task<IActionResult> Details(int id)
-    {
-        var template = await templateManager.GetTemplateByIdAsync(id);
-        var comments = await templateManager.GetCommentsByTemplateIdAsync(id);
-        var likes = await templateManager.GetLikesByTemplateIdAsync(id);
-
-        var templateDetailsViewModel = new TemplateDetailsViewModel
-        {
-            Template = template,
-            Comments = comments,
-            LikesCount = likes.Count
-        };
-
-        return View(templateDetailsViewModel);
-    }
-
     public async Task<IActionResult> TemplateDetails(int id)
     {
-        var templete = await templateManager.GetTemplateAllDetailsAsync(id);
-        ViewBag.TemplateStatus = "Read-Only";
+        var user = await userManager.GetUserAsync(User);
+        var userId = await userManager.GetUserIdAsync(user?? new ApplicationUser());
+        var templete = await templateManager.GetTemplateAllDetailsAsync(id, userId);
+        if (user != null)
+        {
+            foreach (var item in templete.Forms)
+            {
+                item.UserName = user.FirstName + ' ' + user.LastName;
+                item.Email = user.Email;
+            }
+        }
+
+            ViewBag.TemplateStatus = "Read-Only";
         return View(templete);
     }
 
@@ -127,11 +139,12 @@ public class TemplateController : Controller
         return RedirectToAction("Details", new { id = comment.TemplateId });
     }
 
-    [HttpPost]
-    public async Task<IActionResult> AddLike(LikeViewModel like)
+    [HttpGet]
+    public async Task<IActionResult> AddToFavourite(int templateId)
     {
-        var result = await templateManager.AddLikeAsync(like);
-        return RedirectToAction("Details", new { id = like.TemplateId });
+        var userId = await userManager.GetUserIdAsync(await userManager.GetUserAsync(User));
+        var result = await templateManager.AddToFavouriteAsync(templateId, userId);
+        return RedirectToAction(nameof(TemplateDetails), new { id = templateId });
     }
 
     [HttpPost]
@@ -156,13 +169,20 @@ public class TemplateController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> SearchTemplate(string search)
     {
+        var templates = new List<TemplateViewModel>();
         if (string.IsNullOrEmpty(search))
-        {
-            var templates = await templateManager.GettAllTemplateAsync();
-            return PartialView("~/Views/Home/_LatestTemplate.cshtml", templates);
-        }
+            templates = await templateManager.GettAllTemplateAsync();
+        else
+            templates = await templateManager.GetSearchedTemplatesAsync(search);
 
-        var results = await templateManager.GetSearchedTemplatesAsync(search);
-        return PartialView("~/Views/Home/_LatestTemplate.cshtml", results);
+        return PartialView("~/Views/Home/_LatestTemplate.cshtml", templates);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetComments(int templateId)
+    {
+        var comments = await templateManager.GetCommentsAsync(templateId);
+        return PartialView("~/Areas/Templates/Views/Template/_CommentList.cshtml", comments);
     }
 }

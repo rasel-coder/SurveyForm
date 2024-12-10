@@ -10,14 +10,17 @@ namespace SurveyForm.Manager
     public class FormsManager
     {
         private readonly FormsRepository formRepository;
+        private readonly TemplateRepository templateRepository;
         private readonly QuestionRepository questionRepository;
         private readonly IMapper mapper;
 
         public FormsManager(FormsRepository formRepository
+            , TemplateRepository templateRepository
             , QuestionRepository questionRepository
             , IMapper mapper)
         {
             this.formRepository = formRepository;
+            this.templateRepository = templateRepository;
             this.questionRepository = questionRepository;
             this.mapper = mapper;
         }
@@ -28,6 +31,20 @@ namespace SurveyForm.Manager
             {
                 List<Form> forms = await formRepository.GetFormsByTemplateId(id);
                 return mapper.Map<List<FormViewModel>>(forms);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<FormViewModel> GetFormByTemplateIdAsync(int id)
+        {
+            try
+            {
+                FormViewModel formViewModel = new FormViewModel();
+                var template = await templateRepository.GetTemplateById(id);
+                return mapper.Map<FormViewModel>(template);
             }
             catch (Exception)
             {
@@ -52,11 +69,11 @@ namespace SurveyForm.Manager
             }
         }
 
-        public async Task<int> SaveFormAsync(FormViewModel model, IIdentity User)
+        public async Task<int> SaveFormAsync(FormViewModel model, string userId)
         {
             try
             {
-                model.SubmittedBy = User.Name;
+                model.UserId = userId;
                 model.SubmittedDate = DateTime.Now;
                 Form form = mapper.Map<Form>(model);
                 return await formRepository.SaveForm(form);

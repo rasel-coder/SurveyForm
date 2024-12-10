@@ -33,9 +33,6 @@ namespace SurveyForm.Migrations.SurveyFormDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AnswerId"));
 
-                    b.Property<int?>("AnswerInt")
-                        .HasColumnType("int");
-
                     b.Property<string>("AnswerText")
                         .HasColumnType("nvarchar(max)");
 

@@ -38,6 +38,7 @@ public partial class TemplateViewModel
 
     public DateTime CreatedDate { get; set; }
     public int TemplateCount { get; set; }
+    public bool IsLiked { get; set; }
 
     public virtual IEnumerable<TemplateViewModel> MostPopularTemplates { get; set; } = new List<TemplateViewModel>();
     public virtual IEnumerable<CommentViewModel> Comments { get; set; } = new List<CommentViewModel>();

@@ -17,7 +17,9 @@ namespace SurveyForm.Repository
         {
             try
             {
-                return await context.Forms.Where(x => x.TemplateId == id).ToListAsync();
+                return await context.Forms
+                    .Include(x => x.Answers)
+                    .Where(x => x.TemplateId == id).ToListAsync();
             }
             catch (Exception)
             {

@@ -13,7 +13,8 @@ public partial class AnswerViewModel
 
     public string AnswerText { get; set; } = null!;
 
-    public int? AnswerInt { get; set; }
+    public int? Marks { get; set; }
+    public int? MaximumMarks { get; set; }
 
     public virtual FormViewModel Form { get; set; } = null!;
 }

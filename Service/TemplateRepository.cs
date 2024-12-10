@@ -3,6 +3,7 @@ using SurveyForm.Models;
 using Microsoft.EntityFrameworkCore;
 using SurveyForm.Utility;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Xml.Linq;
 
 namespace SurveyForm.Repository
 {
@@ -20,6 +21,21 @@ namespace SurveyForm.Repository
             try
             {
                 return await context.Templates.OrderByDescending(x => x.TemplateId).ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<Comment>> GetSearchedTemplates(int templateId)
+        {
+            try
+            {
+                return await context.Comments
+                    .Where(c => c.TemplateId == templateId)
+                    .OrderByDescending(c => c.CreatedDate)
+                    .ToListAsync();
             }
             catch (Exception)
             {
@@ -67,7 +83,11 @@ namespace SurveyForm.Repository
             {
                 return await context.Templates
                     .Include(x => x.TemplateSpecificUsers)
-                    .Include(x => x.Questions)
+                    .Include(x => x.Questions.OrderBy(x => x.DisplayOrder))
+                    .Include(x => x.Likes)
+                    .Include(x => x.Comments.OrderByDescending(x => x.CreatedDate))
+                    .Include(x => x.Forms)
+                        .ThenInclude(x => x.Answers)
                     .Where(x => x.TemplateId == id).FirstOrDefaultAsync();
             }
             catch (Exception)
@@ -212,19 +232,17 @@ namespace SurveyForm.Repository
                 .ToListAsync();
         }
 
-        public async Task<bool> AddLike(Like like)
+        public async Task<bool> AddToFavourite(Like like)
         {
             var existingLike = await context.Likes
                 .FirstOrDefaultAsync(l => l.TemplateId == like.TemplateId && l.UserId == like.UserId);
 
             if (existingLike != null)
-            {
-                return false;
-            }
+                context.Likes.Remove(existingLike);
+            else
+                await context.Likes.AddAsync(like);
 
-            context.Likes.Add(like);
-            var result = await context.SaveChangesAsync();
-            return result > 0;
+            return await context.SaveChangesAsync() > 0;
         }
 
         public async Task<List<Template>> MostPopularTemplate()

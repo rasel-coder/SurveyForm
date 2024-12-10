@@ -1,0 +1,21 @@
+﻿@using Newtonsoft.Json
+@using SurveyForm.Utility
+@model List<SurveyForm.ViewModels.CommentViewModel>
+
+@{
+
+}
+@if (Model != null && Model.Any())
+{
+	@foreach (var comment in Model)
+	{
+		<div class="comment border p-3 rounded mb-3">
+			<p><strong>@comment.CreatedBy -</strong> @comment.CommentText</p>
+			<p><small>Posted on - @comment.CreatedDate.ToString("MMMM dd, yyyy HH:mm")</small></p>
+		</div>
+	}
+}
+else
+{
+	<p>No comments yet. Be the first to comment!</p>
+}

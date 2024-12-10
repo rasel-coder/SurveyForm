@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace SurveyForm.Areas.Templates.Controllers
 {
@@ -13,10 +14,13 @@ namespace SurveyForm.Areas.Templates.Controllers
     public class QuestionController : Controller
     {
         private readonly QuestionManager questionManager;
+        private readonly INotyfService toastNotification;
 
-        public QuestionController(QuestionManager questionManager)
+        public QuestionController(QuestionManager questionManager
+            , INotyfService toastNotification)
         {
             this.questionManager = questionManager;
+            this.toastNotification = toastNotification;
         }
 
         [HttpGet]
@@ -56,6 +60,14 @@ namespace SurveyForm.Areas.Templates.Controllers
         {
             await questionManager.SaveQuestionOrderAsync(questionOrderList);
             return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SetQuestionMark(List<AnswerViewModel> Answers)
+        {
+            toastNotification.Success("Form updated");
+            return Json(new { success = true });
+            //return RedirectToAction("TemplateDetails", "Template", new { area = "Templates" });
         }
     }
 }

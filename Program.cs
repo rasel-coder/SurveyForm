@@ -2,6 +2,7 @@ using AspNetCoreHero.ToastNotification;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SurveyForm.Data;
+using SurveyForm.Hubs;
 using SurveyForm.Manager;
 using SurveyForm.Models;
 using SurveyForm.Repository;
@@ -13,6 +14,7 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DB") ?? throw new InvalidOperationException("Connection string 'DB' not found.");
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddSignalR();
 builder.Services.AddMvc();
 
 builder.Services.AddNotyf(config =>
@@ -71,6 +73,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapHub<CommentHub>("/CommentHub");
 
 app.MapControllerRoute(
       name: "areas",

@@ -29,16 +29,15 @@ namespace SurveyForm.Areas.Templates.Controllers
 
         public async Task<IActionResult> Index(int id)
         {
-            FormViewModel formViewModel = new FormViewModel();
-            formViewModel.Questions = await questionManager.GetQuestionsByTemplateIdAsync(id);
-            formViewModel.TemplateId = formViewModel.Questions.FirstOrDefault().TemplateId;
+            var formViewModel = await formManager.GetFormByTemplateIdAsync(id);
             return View(formViewModel);
         }
 
         [HttpPost]
         public async Task<IActionResult> SubmitForm(FormViewModel model)
         {
-            await formManager.SaveFormAsync(model, User.Identity);
+            var userId = await userManager.GetUserIdAsync(await userManager.GetUserAsync(User));
+            await formManager.SaveFormAsync(model, userId);
             return View();
         }
 

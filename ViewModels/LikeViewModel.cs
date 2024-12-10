@@ -9,9 +9,9 @@ public partial class LikeViewModel
 
     public int TemplateId { get; set; }
 
-    public int UserId { get; set; }
+    public string? UserId { get; set; }
 
-    public DateTime LikedAt { get; set; }
+    public DateTime? LikedDate { get; set; }
 
     public virtual TemplateViewModel Template { get; set; } = null!;
 }

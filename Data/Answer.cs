@@ -16,7 +16,8 @@ public partial class Answer
 
     public string? AnswerText { get; set; }
 
-    public int? AnswerInt { get; set; }
+    public int? Marks { get; set; }
+    public int? MaximumMarks { get; set; }
 
     public virtual Form? Form { get; set; }
 }

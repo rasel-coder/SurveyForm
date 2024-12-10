@@ -173,8 +173,7 @@ namespace SurveyForm.Migrations.SurveyFormDb
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FormId = table.Column<int>(type: "int", nullable: true),
                     QuestionId = table.Column<int>(type: "int", nullable: true),
-                    AnswerText = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AnswerInt = table.Column<int>(type: "int", nullable: true)
+                    AnswerText = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

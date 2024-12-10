@@ -13,7 +13,7 @@ public partial class Form
 
     public int? TemplateId { get; set; }
 
-    public string? SubmittedBy { get; set; }
+    public string? UserId { get; set; }
 
     public DateTime? SubmittedDate { get; set; }
 

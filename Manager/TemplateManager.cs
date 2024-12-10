@@ -53,6 +53,19 @@ namespace SurveyForm.Manager
             }
         }
 
+        public async Task<List<TemplateViewModel>> GetCommentsAsync(int templateId)
+        {
+            try
+            {
+                var templates = await templateRepository.GetSearchedTemplates(templateId);
+                return mapper.Map<List<TemplateViewModel>>(templates);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<List<TemplateViewModel>> GetAllTemplateByUserIdAsync(string id)
         {
             try
@@ -226,12 +239,17 @@ namespace SurveyForm.Manager
             }
         }
 
-        public async Task<bool> AddLikeAsync(LikeViewModel like)
+        public async Task<bool> AddToFavouriteAsync(int templateId, string userId)
         {
             try
             {
-                var likeEntity = mapper.Map<Like>(like);
-                return await templateRepository.AddLike(likeEntity);
+                Like like = new Like
+                {
+                    TemplateId = templateId,
+                    UserId = userId,
+                    LikedDate = DateTime.UtcNow
+                };
+                return await templateRepository.AddToFavourite(like);
             }
             catch (Exception)
             {
@@ -239,22 +257,16 @@ namespace SurveyForm.Manager
             }
         }
 
-        public async Task<TemplateViewModel> GetTemplateAllDetailsAsync(int id)
+        public async Task<TemplateViewModel> GetTemplateAllDetailsAsync(int templateId, string userId)
         {
             try
             {
-                TemplateViewModel templateViewModel = new TemplateViewModel();
-                var template = await templateRepository.GetTemplateById(id);
-                var comments = await templateRepository.GetCommentsByTemplateId(id);
-                var likes = await templateRepository.GetLikesByTemplateId(id);
-                var questions = await questionRepository.GetQuestionsByTemplateId(id);
-                var submitForms = await formsRepository.GetFormsByTemplateId(id);
+                var template = await templateRepository.GetTemplateById(templateId);
+                var templateViewModel = mapper.Map<TemplateViewModel>(template);
 
-                templateViewModel = mapper.Map<TemplateViewModel>(template);
-                templateViewModel.Comments = mapper.Map<List<CommentViewModel>>(comments);
-                templateViewModel.Likes = mapper.Map<List<LikeViewModel>>(likes);
-                templateViewModel.Questions = mapper.Map<List<QuestionViewModel>>(questions);
-                templateViewModel.Forms = mapper.Map<List<FormViewModel>>(submitForms);
+                if (templateViewModel.Likes.Where(x => x.UserId == userId).FirstOrDefault() != null)
+                    templateViewModel.IsLiked = true;
+
                 return templateViewModel;
             }
             catch (Exception)
