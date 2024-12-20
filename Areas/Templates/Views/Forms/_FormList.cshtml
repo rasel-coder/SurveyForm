@@ -3,104 +3,207 @@
 
 @{
 	var index = 1;
+	var Aggrigations = Model.Aggrigations.ToList();
 }
 
 @if (Model.Forms != null && Model.Forms.Any())
 {
-	<div class="accordion-item">
-		<div class="row p-3 m-0">
-			<p class="fw-bold text-center m-0 col-md-1">#</p>
-			<p class="fw-bold m-0 col-md-3">Submit By</p>
-			<p class="fw-bold m-0 col-md-3">Email</p>
-			<p class="fw-bold m-0 col-md-3">Submit Date</p>
-			<p class="fw-bold m-0 col-md-2">Action</p>
-		</div>
-	</div>
-	@foreach (var form in Model.Forms)
-	{
-		var Answers = form.Answers.ToList();
-		<div class="accordion-item">
-			<div class="accordion-header" id="heading_@index">
-				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@index" aria-expanded="true" aria-controls="collapse_@index">
-					<div class="row w-100">
-						<p class="m-0 col-md-1 text-center fw-bold">@index</p>
-						<p class="m-0 col-md-3">@form.UserName</p>
-						<p class="m-0 col-md-3">@form.Email</p>
-						<p class="m-0 col-md-3">@form.SubmittedDate</p>
-						<p class="m-0 col-md-1 text-end">
-							<a class="btn btn-sm btn-info" onclick="detailsTemplateForm(@form.FormId, @form.TemplateId)"><i class='bx bx-info-circle'></i></a>
-						</p>
-					</div>
-				</button>
+	<ul class="nav nav-tabs" id="templateTab" role="tablist">
+		<li class="nav-item" role="presentation">
+			<a class="nav-link @(ViewBag.ActiveForm == "Form-Accordion" ? "active" : "")" id="form-accordion-tab" data-bs-toggle="tab" href="#form-accordion" role="tab" aria-controls="form-accordion" aria-selected="true">Form Accordion</a>
+		</li>
+		<li class="nav-item" role="presentation">
+			<a class="nav-link @(ViewBag.ActiveForm == "Form-Aggrigation" ? "active" : "")" id="form-aggrigation-tab" data-bs-toggle="tab" href="#form-aggrigation" role="tab" aria-controls="form-aggrigation" aria-selected="false">Aggrigation</a>
+		</li>
+	</ul>
+
+	<div class="tab-content" id="templateTabBody">
+		<div class="tab-pane fade @(ViewBag.ActiveForm == "Form-Accordion" ? "active show" : "")" id="form-accordion" role="tabpanel" aria-labelledby="form-accordion-tab">
+			<div class="accordion-item">
+				<div class="row p-3 m-0">
+					<p class="fw-bold text-center m-0 col-md-1">#</p>
+					<p class="fw-bold m-0 col-md-3">Submit By</p>
+					<p class="fw-bold m-0 col-md-3">Email</p>
+					<p class="fw-bold m-0 col-md-3">Submit Date</p>
+					<p class="fw-bold m-0 col-md-2">Action</p>
+				</div>
 			</div>
-			<div id="collapse_@index" class="accordion-collapse collapse" aria-labelledby="heading_@index" data-bs-parent="#form-generate-row">
-				<div class="accordion-body">
-					@using (Html.BeginForm("SetQuestionMark", "Question", FormMethod.Post, new { area = "Templates", @class = "mt-3" }))
-					{
-						@Html.HiddenFor(x => x.TemplateId)
-						<div class="question-list">
-							@for (int i = 0; i < Model.Questions.Count() && Answers.Count() > i; i++)
+			@foreach (var form in Model.Forms)
+			{
+				var Answers = form.Answers.ToList();
+				<div class="accordion-item">
+					<div class="accordion-header" id="heading_@index">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@index" aria-expanded="true" aria-controls="collapse_@index">
+							<div class="row w-100">
+								<p class="m-0 col-md-1 text-center fw-bold">@index</p>
+								<p class="m-0 col-md-3">@form.UserName</p>
+								<p class="m-0 col-md-3">@form.Email</p>
+								<p class="m-0 col-md-3">@form.SubmittedDate</p>
+								<p class="m-0 col-md-1 text-end">
+									<a class="btn btn-sm btn-info" onclick="detailsTemplateForm(@form.FormId, @form.TemplateId)"><i class='bx bx-info-circle'></i></a>
+								</p>
+							</div>
+						</button>
+					</div>
+					<div id="collapse_@index" class="accordion-collapse collapse" aria-labelledby="heading_@index" data-bs-parent="#form-generate-row">
+						<div class="accordion-body">
+							@using (Html.BeginForm("SetQuestionMark", "Question", FormMethod.Post, new { area = "Templates", @class = "mt-3" }))
 							{
-								<div class="container mt-2" style="border-radius: 5px; border: 1px solid #d2d2d2;">
-									@{
-										var question = Model.Questions.ElementAt(i);
-										@Html.HiddenFor(x => Answers[i].AnswerId)
-										@Html.HiddenFor(x => Answers[i].FormId)
-										@Html.HiddenFor(x => Answers[i].QuestionId)
+								<input type="hidden" name="templateId" value="@Model.TemplateId" />
+								<div class="question-list">
+									@for (int i = 0; i < Model.Questions.Count() && Answers.Count() > i; i++)
+									{
+										<div class="container mt-2" style="border-radius: 5px; border: 1px solid #d2d2d2;">
+											@{
+												var question = Model.Questions.ElementAt(i);
+												@Html.HiddenFor(x => Answers[i].AnswerId)
+												@Html.HiddenFor(x => Answers[i].FormId)
+												@Html.HiddenFor(x => Answers[i].QuestionId)
+												@Html.HiddenFor(x => Answers[i].TemplateId)
 
-										<div class="question-item mb-3">
-											<div class="row">
-												<div class="col-md-8">
-													<label class="form-label m-0">@question.QuestionTitle</label>
-													<p class="mb-2 text-danger" style="font-size: 13px;">
-														<i class='bx bx-chevrons-right'></i> @question.Description
-													</p>
+												<div class="question-item mb-3">
+													<div class="row">
+														<div class="col-md-8">
+															<label class="form-label m-0">@question.QuestionTitle</label>
+															<p class="mb-2 text-danger" style="font-size: 13px;">
+																<i class='bx bx-chevrons-right'></i> @question.Description
+															</p>
+														</div>
+														<div class="col-md-4 d-flex align-items-center justify-content-end">
+															<input type="number" name="@($"Answers[{i}].Marks")" value="@Answers[i].Marks" class="form-control text-center no-spinners" style="width: 50px;" />
+															<label class="form-label m-2">Out of</label>
+															<input type="number" name="@($"Answers[{i}].MaximumMarks")" value="@Answers[i].MaximumMarks" class="form-control text-center no-spinners" style="width: 50px;" />
+														</div>
+													</div>
+
+													@if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Single_Line))
+													{
+														<input class="form-control" type="text" value="@Answers[i].AnswerText" name="@($"Answers[{i}].AnswerText")" />
+													}
+													else if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Multiple_Line))
+													{
+														<textarea class="form-control" name="@($"Answers[{i}].AnswerText")" rows="3">@Answers[i].AnswerText</textarea>
+													}
+													else if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Positive_Integer))
+													{
+														<input class="form-control" type="number" value="@Answers[i].AnswerText" name="@($"Answers[{i}].AnswerText")" />
+													}
+													else if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Checkbox))
+													{
+														@foreach (var option in question.QuestionOptions)
+														{
+															<input type="radio"
+																   name="Answers[@i].AnswerText"
+																   value="@option.QuestionOptionId"
+																   class="form-check-input"
+															@(int.Parse(Answers[i].AnswerText) == option.QuestionOptionId ? "checked" : "") />
+
+															<label class="form-label m-0 ms-3">@option.OptionName</label>
+															<br />
+														}
+													}
 												</div>
-												<div class="col-md-4 d-flex align-items-center justify-content-end">
-													<input type="number" name="@($"Answers[{i}].Marks")" class="form-control text-center no-spinners" style="width: 50px;" />
-													<label class="form-label m-2">Out of</label>
-													<input type="number" name="@($"Answers[{i}].MaximumMarks")" class="form-control text-center no-spinners" value="5" style="width: 50px;" />
-												</div>
-											</div>
-
-											@if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Single_Line))
-											{
-												<input class="form-control" type="text" value="@Answers[i].AnswerText" name="@($"Answers[{i}].AnswerText")" />
-											}
-											else if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Multiple_Line))
-											{
-												<textarea class="form-control" name="@($"Answers[{i}].AnswerText")" rows="3">@Answers[i].AnswerText</textarea>
-											}
-											else if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Positive_Integer))
-											{
-												<input class="form-control" type="number" value="@Answers[i].AnswerText" name="@($"Answers[{i}].AnswerText")" />
-											}
-											else if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Checkbox))
-											{
-												@foreach (var option in question.QuestionOptions)
-												{
-													<input type="radio"
-														   name="Answers[@i].AnswerText"
-														   value="@option.QuestionOptionId"
-														   class="form-check-input"
-													@(int.Parse(Answers[i].AnswerText) == option.QuestionOptionId ? "checked" : "") />
-
-													<label class="form-label m-0 ms-3">@option.OptionName</label>
-													<br />
-												}
 											}
 										</div>
 									}
 								</div>
+								<button type="submit" class="btn btn-primary mt-2">Submit</button>
 							}
 						</div>
-						<button type="submit" class="btn btn-primary mt-2">Submit</button>
-					}
+					</div>
 				</div>
-			</div>
+				index++;
+			}
 		</div>
-		index++;
-	}
+
+		<div class="tab-pane fade @(ViewBag.ActiveForm == "Form-Aggrigation" ? "active show" : "")" id="form-aggrigation" role="tabpanel" aria-labelledby="form-aggrigation-tab">
+			<div class="accordion" id="aggregationAccordion">
+				@if (Model.Aggrigations != null && Model.Aggrigations.Any())
+				{
+					int groupIndex = 0;
+					<div class="accordion-item">
+						<div class="row p-3 m-0">
+							<p class="fw-bold text-center m-0 col-md-1">#</p>
+							<p class="fw-bold m-0 col-md-9">Question Name</p>
+						</div>
+					</div>
+					foreach (var answerGroup in Model.Aggrigations)
+					{
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="heading-@groupIndex">
+								<button class="accordion-button collapsed"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#collapse-@groupIndex"
+										aria-expanded="@(groupIndex == 0 ? "true" : "false")"
+										aria-controls="collapse-@groupIndex">
+									<p class="m-0 col-md-1 text-center fw-bold">@(groupIndex + 1)</p>
+									<p class="m-0 col-md-9">@Model.Questions.ElementAt(groupIndex).QuestionTitle</p>
+								</button>
+							</h2>
+							<div id="collapse-@groupIndex" class="accordion-collapse collapse" aria-labelledby="heading-@groupIndex" data-bs-parent="#aggregationAccordion">
+								<div class="accordion-body">
+									<div class="question-list">
+										@if (answerGroup.Any())
+										{
+											int answerIndex = 0;
+											foreach (var answer in answerGroup)
+											{
+												<div class="mt-2 p-2 ps-3" style="border-radius: 5px; border: 1px solid #d2d2d2;">
+													<form asp-action="UpdateAnswer" asp-controller="Forms" asp-area="Templates" method="post">
+														<div class="row">
+															<div class="col-md-4 d-flex align-items-center">
+																<label class="form-label m-0">@answer.AnswerText</label>
+															</div>
+															<div class="col-md-5 d-flex align-items-center">
+																<label class="form-label m-0">@Model.Forms.ElementAt(answerIndex).UserName | @Model.Forms.ElementAt(answerIndex).Email</label>
+															</div>
+															<div class="col-md-3 d-flex align-items-center justify-content-end">
+																<input type="hidden" name="AnswerId" value="@answer.AnswerId" />
+																<input type="hidden" name="TemplateId" value="@answer.TemplateId" />
+																<input type="hidden" name="FormId" value="@answer.FormId" />
+																<input type="hidden" name="QuestionId" value="@answer.QuestionId" />
+																<label class="form-label m-2">Marks:</label>
+																<input type="number"
+																	   name="Marks"
+																	   value="@answer.Marks"
+																	   class="form-control text-center no-spinners"
+																	   style="width: 50px;"
+																	   onchange="this.form.submit()" />
+																<label class="form-label m-2">Out of</label>
+																<input type="number"
+																	   name="MaximumMarks"
+																	   value="@answer.MaximumMarks"
+																	   class="form-control text-center no-spinners"
+																	   style="width: 50px;"
+																	   onchange="this.form.submit()" />
+															</div>
+														</div>
+													</form>
+												</div>
+												answerIndex++;
+											}
+										}
+										else
+										{
+											<p class="text-muted">No answers available in this group.</p>
+										}
+									</div>
+								</div>
+							</div>
+						</div>
+						groupIndex++;
+					}
+				}
+				else
+				{
+					<p class="text-muted">No answer groups available.</p>
+				}
+			</div>
+
+			<button type="submit" class="btn btn-primary mt-3">Submit</button>
+		</div>
+	</div>
 }
 else
 {

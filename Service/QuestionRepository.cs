@@ -47,6 +47,19 @@ namespace SurveyForm.Repository
             }
         }
 
+        public async Task<bool> SaveQuestionMark(List<Answer> model)
+        {
+            try
+            {
+                context.Answers.UpdateRange(model);
+                return await context.SaveChangesAsync() > 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<int> AddTemplateQuestion(Question model)
         {
             try

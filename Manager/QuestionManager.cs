@@ -46,6 +46,19 @@ namespace SurveyForm.Manager
             }
         }
 
+        public async Task<bool> SaveQuestionMarkAsync(List<AnswerViewModel> model)
+        {
+            try
+            {
+                var questions = mapper.Map<List<Answer>>(model);
+                return await questionRepository.SaveQuestionMark(questions);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<int> AddTemplateQuestionAsync(QuestionViewModel model, IIdentity? User)
         {
             try

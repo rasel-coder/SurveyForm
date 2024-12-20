@@ -63,11 +63,11 @@ namespace SurveyForm.Areas.Templates.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SetQuestionMark(List<AnswerViewModel> Answers)
+        public async Task<IActionResult> SetQuestionMark(int templateId, List<AnswerViewModel> Answers)
         {
+            var result = questionManager.SaveQuestionMarkAsync(Answers);
             toastNotification.Success("Form updated");
-            return Json(new { success = true });
-            //return RedirectToAction("TemplateDetails", "Template", new { area = "Templates" });
+            return RedirectToAction("TemplateDetails", "Template", new { area = "Templates", id = templateId, activeTab = "Template-Form" });
         }
     }
 }

@@ -49,3 +49,27 @@ $('#searchBox').on('input', function () {
         }
     });
 });
+
+
+
+function updateAnswer(answerId, marks, maxMarks) {
+    const data = {
+        AnswerId: answerId,
+        Marks: marks,
+        MaximumMarks: maxMarks
+    };
+    console.log(data);
+
+    $.ajax({
+        url: '/Templates/Forms/UpdateAnswer',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (response) {
+            console.log('Update successful:', response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}

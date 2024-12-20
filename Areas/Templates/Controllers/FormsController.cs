@@ -46,5 +46,16 @@ namespace SurveyForm.Areas.Templates.Controllers
             FormViewModel form =  await formManager.GetFormByIdAsync(formId, templateId);
             return PartialView("~/Areas/Templates/Views/Shared/_TemplateFormDetailsModal.cshtml", form);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateAnswer(AnswerViewModel model)
+        {
+            if (model == null || model?.AnswerId == null)
+                return BadRequest("Invalid data");
+
+            bool result = await formManager.UpdateAnswerAsync(model);
+            //return Json(new { success = result });
+            return RedirectToAction("TemplateDetails", "Template", new { area = "Templates", id = model.TemplateId, activeTab = "Template-Form", activeForm = "Form-Aggrigation" });
+        }
     }
 }

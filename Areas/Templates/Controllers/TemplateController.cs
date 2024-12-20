@@ -114,22 +114,38 @@ public class TemplateController : Controller
     //}
 
     [AllowAnonymous]
-    public async Task<IActionResult> TemplateDetails(int id)
+    public async Task<IActionResult> TemplateDetails(int id, string activeTab = "Template-Setup", string activeForm = "Form-Accordion")
     {
         var user = await userManager.GetUserAsync(User);
         var userId = await userManager.GetUserIdAsync(user?? new ApplicationUser());
-        var templete = await templateManager.GetTemplateAllDetailsAsync(id, userId);
-        if (user != null)
+        var template = await templateManager.GetTemplateAllDetailsAsync(id, userId);
+
+        if (template.Forms != null && template.Forms.Any())
         {
-            foreach (var item in templete.Forms)
+            foreach (var item in template.Forms)
             {
-                item.UserName = user.FirstName + ' ' + user.LastName;
-                item.Email = user.Email;
+                var formUser = await userManager.FindByIdAsync(item.UserId);
+                item.UserName = formUser.FirstName + ' ' + formUser.LastName;
+                item.Email = formUser.Email;
             }
         }
 
-            ViewBag.TemplateStatus = "Read-Only";
-        return View(templete);
+        foreach (var item in template.Questions)
+        {
+            List<AnswerViewModel> answers = new List<AnswerViewModel>();
+            foreach (var form in template.Forms)
+            {
+                AnswerViewModel answer = new AnswerViewModel();
+                answer = form.Answers.FirstOrDefault(x => x.QuestionId == item.QuestionId);
+                answers.Add(answer);
+            }
+            template.Aggrigations.Add(answers);
+        }
+
+        ViewBag.ActiveTab = activeTab;
+        ViewBag.ActiveForm = activeForm;
+        ViewBag.TemplateStatus = "Read-Only";
+        return View(template);
     }
 
     [HttpPost]

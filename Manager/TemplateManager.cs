@@ -264,6 +264,14 @@ namespace SurveyForm.Manager
                 var template = await templateRepository.GetTemplateById(templateId);
                 var templateViewModel = mapper.Map<TemplateViewModel>(template);
 
+                foreach (var item in templateViewModel.Forms)
+                {
+                    foreach (var item1 in item.Answers)
+                    {
+                        
+                    }
+                }
+
                 if (templateViewModel.Likes.Where(x => x.UserId == userId).FirstOrDefault() != null)
                     templateViewModel.IsLiked = true;
 

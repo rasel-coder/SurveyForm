@@ -1,4 +1,5 @@
-﻿using SurveyForm.Models;
+﻿using SurveyForm.Data;
+using SurveyForm.Models;
 using SurveyForm.Utility;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,8 @@ public partial class TemplateViewModel
     public DateTime CreatedDate { get; set; }
     public int TemplateCount { get; set; }
     public bool IsLiked { get; set; }
+
+    public virtual List<List<AnswerViewModel>> Aggrigations { get; set; } = new List<List<AnswerViewModel>>();
 
     public virtual IEnumerable<TemplateViewModel> MostPopularTemplates { get; set; } = new List<TemplateViewModel>();
     public virtual IEnumerable<CommentViewModel> Comments { get; set; } = new List<CommentViewModel>();

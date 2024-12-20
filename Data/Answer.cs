@@ -13,6 +13,7 @@ public partial class Answer
     public int? FormId { get; set; }
 
     public int? QuestionId { get; set; }
+    public int TemplateId { get; set; }
 
     public string? AnswerText { get; set; }
 

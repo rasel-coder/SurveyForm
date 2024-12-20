@@ -57,5 +57,25 @@ namespace SurveyForm.Repository
                 .Where(f => f.TemplateId == templateId && f.SubmittedDate.HasValue)
                 .ToListAsync();
         }
+
+        public async Task<bool> UpdateAnswer(Answer model)
+        {
+            try
+            {
+                var answer = await context.Answers.FindAsync(model.AnswerId);
+                if (answer != null)
+                {
+                    answer.Marks = model.Marks;
+                    answer.MaximumMarks = model.MaximumMarks;
+                    context.Answers.Update(answer);
+                    return await context.SaveChangesAsync() > 0;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

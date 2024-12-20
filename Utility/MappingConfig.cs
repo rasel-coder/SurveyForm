@@ -23,5 +23,6 @@ public class MappingConfig : Profile
         CreateMap<Topic, TopicViewModel>().ReverseMap();
 
         CreateMap<FormViewModel, TemplateViewModel>().ReverseMap();
+        CreateMap<FormViewModel, Template>().ReverseMap();
     }
 }

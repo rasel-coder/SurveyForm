@@ -5,22 +5,23 @@
 
 @{
 	ViewData["Title"] = "Template Details";
+	var activeTab = ViewBag.ActiveTab;
 }
 
 <ul class="nav nav-tabs" id="templateTab" role="tablist">
 	<li class="nav-item" role="presentation">
-		<a class="nav-link active" id="template-setup-tab" data-bs-toggle="tab" href="#template-setup" role="tab" aria-controls="template-setup" aria-selected="true">Setup</a>
+		<a class="nav-link @(ViewBag.ActiveTab == "Template-Setup" ? "active" : "")" id="template-setup-tab" data-bs-toggle="tab" href="#template-setup" role="tab" aria-controls="template-setup" aria-selected="true">Setup</a>
 	</li>
 	<li class="nav-item" role="presentation">
-		<a class="nav-link" id="template-question-tab" data-bs-toggle="tab" href="#template-question" role="tab" aria-controls="template-question" aria-selected="false">Questions</a>
+		<a class="nav-link @(ViewBag.ActiveTab == "Template-Question" ? "active" : "")" id="template-question-tab" data-bs-toggle="tab" href="#template-question" role="tab" aria-controls="template-question" aria-selected="false">Questions</a>
 	</li>
 	<li class="nav-item" role="presentation">
-		<a class="nav-link" id="template-form-tab" data-bs-toggle="tab" href="#template-form" role="tab" aria-controls="template-form" aria-selected="false">Forms</a>
+		<a class="nav-link @(ViewBag.ActiveTab == "Template-Form" ? "active" : "")" id="template-form-tab" data-bs-toggle="tab" href="#template-form" role="tab" aria-controls="template-form" aria-selected="false">Forms</a>
 	</li>
 </ul>
 
 <div class="tab-content" id="templateTabBody">
-	<div class="tab-pane fade show active" id="template-setup" role="tabpanel" aria-labelledby="template-setup-tab">
+	<div class="tab-pane fade @(ViewBag.ActiveTab == "Template-Setup" ? "active show" : "")" id="template-setup" role="tabpanel" aria-labelledby="template-setup-tab">
 		<div class="card template-setup">
 			<div class="product-imgs">
 				<div class="img-display">
@@ -76,13 +77,13 @@
 		</div>
 	</div>
 
-	<div class="tab-pane fade" id="template-question" role="tabpanel" aria-labelledby="template-question-tab">
+	<div class="tab-pane fade @(ViewBag.ActiveTab == "Template-Question" ? "active show" : "")" id="template-question" role="tabpanel" aria-labelledby="template-question-tab">
 		<div id="question_list_sortable_placeholder">
 			<partial name="~/Areas/Templates/Views/Question/_QuestionList.cshtml" model="@Model?.Questions" />
 		</div>
 	</div>
 
-	<div class="tab-pane fade" id="template-form" role="tabpanel" aria-labelledby="template-form-tab">
+	<div class="tab-pane fade @(ViewBag.ActiveTab == "Template-Form" ? "active show" : "")" id="template-form" role="tabpanel" aria-labelledby="template-form-tab">
 		<div id="question_list_sortable_placeholder">
 			<partial name="~/Areas/Templates/Views/Forms/_FormList.cshtml" model="@Model" />
 		</div>

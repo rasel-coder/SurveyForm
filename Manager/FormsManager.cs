@@ -69,6 +69,19 @@ namespace SurveyForm.Manager
             }
         }
 
+        public async Task<bool> UpdateAnswerAsync(AnswerViewModel model)
+        {
+            try
+            {
+                var answer = mapper.Map<Answer>(model);
+                return await formRepository.UpdateAnswer(answer);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<int> SaveFormAsync(FormViewModel model, string userId)
         {
             try
@@ -76,6 +89,10 @@ namespace SurveyForm.Manager
                 model.UserId = userId;
                 model.SubmittedDate = DateTime.Now;
                 Form form = mapper.Map<Form>(model);
+                foreach (var item in model.Answers)
+                {
+                    item.MaximumMarks = 5;
+                }
                 return await formRepository.SaveForm(form);
             }
             catch (Exception)

@@ -17,6 +17,7 @@
 				@{
 					var question = Model.Questions.ElementAt(i);
 					<input type="hidden" name="Answers[@i].QuestionId" value="@question.QuestionId" />
+					<input type="hidden" name="Answers[@i].TemplateId" value="@question.TemplateId" />
 
 					<div class="question-item mb-3">
 						<label class="form-label m-0">@question.QuestionTitle</label>
