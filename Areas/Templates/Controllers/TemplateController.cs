@@ -39,9 +39,14 @@ public class TemplateController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
-        var userId = await userManager.GetUserIdAsync(await userManager.GetUserAsync(User));
-        var templates = await templateManager.GetAllTemplateByUserIdAsync(userId);
-        return View(templates);
+        var user = await userManager.GetUserAsync(User);
+        var userId = await userManager.GetUserIdAsync(user);
+        var userRole = await userManager.GetRolesAsync(user);
+
+        TemplatePageViewModel template = new TemplatePageViewModel();
+        template.MyTemplates = await templateManager.GetAllTemplateByUserIdAsync(userId, userRole.FirstOrDefault());
+        template.FavouriteTemplates = await templateManager.GetFavouriteTemplatesByUserIdAsync(userId);
+        return View(template);
     }
 
     public async Task<IActionResult> SaveTemplate(int id, string tab = "Setup")
@@ -57,7 +62,7 @@ public class TemplateController : Controller
         ViewBag.Topics = new SelectList(topics, "TopicId", "TopicName");
         ViewBag.Tags = await templateManager.GetAllTagNameAsync();
 
-        var users = await userManager.GetUsersInRoleAsync(Enums.AppRoleEnums.Admin.ToString());
+        var users = await userManager.GetUsersInRoleAsync(Enums.AppRoleEnums.User.ToString());
         ViewBag.Users = users.Select(user => new { UserId = user.Id, UserName = user.FirstName + " " + user.LastName }).Where(x => x.UserId != userId).ToList();
 
         template.Questions = template.Template.Questions;
@@ -69,18 +74,19 @@ public class TemplateController : Controller
     {
         var userId = await userManager.GetUserIdAsync(await userManager.GetUserAsync(User));
 
-        List<TemplateSpecificUserViewModel> templates = new List<TemplateSpecificUserViewModel>();
+        List<FormSpecificUserViewModel> templates = new List<FormSpecificUserViewModel>();
         if (model.AccessMode == Enums.TemplateSpecificUser.Authenticated_User.ToString())
-            model.TemplateSpecificUsers = new List<TemplateSpecificUserViewModel> { new() { UserId = Enums.TemplateSpecificUser.Authenticated_User.ToString() } };
-        else if (model.AccessMode == Enums.TemplateSpecificUser.Specified_User.ToString() && !string.IsNullOrEmpty(Request.Form["TemplateSpecificUsers"]))
+            model.FormSpecificUsers = new List<FormSpecificUserViewModel> { new() { UserId = Enums.TemplateSpecificUser.Authenticated_User.ToString() } };
+        else if (model.AccessMode == Enums.TemplateSpecificUser.Specified_User.ToString() && Request.Form["FormSpecificUsers"].ToList().FirstOrDefault() != null)
         {
-            List<TemplateSpecificUserViewModel> users = JsonConvert.DeserializeObject<List<TemplateSpecificUserViewModel>>(Request.Form["TemplateSpecificUsers"]);
-            users.Add(new TemplateSpecificUserViewModel() { UserId = userId });
-            model.TemplateSpecificUsers = users;
+            List<FormSpecificUserViewModel> users = JsonConvert.DeserializeObject<List<FormSpecificUserViewModel>>(Request.Form["FormSpecificUsers"]);
+            users.Add(new FormSpecificUserViewModel() { UserId = userId });
+            model.FormSpecificUsers = users;
         }
         else
-            model.TemplateSpecificUsers = new List<TemplateSpecificUserViewModel> { new() { UserId = userId } };
+            model.FormSpecificUsers = new List<FormSpecificUserViewModel> { new() { UserId = userId } };
 
+        model.UserId = userId;
         if (model.TemplateId == 0)
             model.TemplateId = await templateManager.CreateTemplateAsync(model, User.Identity);
         else
@@ -144,7 +150,7 @@ public class TemplateController : Controller
 
         ViewBag.ActiveTab = activeTab;
         ViewBag.ActiveForm = activeForm;
-        ViewBag.TemplateStatus = "Read-Only";
+        ViewBag.UserId = userId;
         return View(template);
     }
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SurveyForm.Data;
+using SurveyForm.Utility;
 
 namespace SurveyForm.Areas.Templates.Controllers
 {
@@ -29,8 +30,14 @@ namespace SurveyForm.Areas.Templates.Controllers
 
         public async Task<IActionResult> Index(int id)
         {
-            var formViewModel = await formManager.GetFormByTemplateIdAsync(id);
-            return View(formViewModel);
+            var userId = await userManager.GetUserIdAsync(await userManager.GetUserAsync(User));
+            var specificUsers = await formManager.GetFormSpecificUsersAsync(id);
+            if (specificUsers.Any(x => x.UserId == userId) || specificUsers.Any(x => x.UserId == Enums.TemplateSpecificUser.Authenticated_User.ToString()))
+            {
+                var formViewModel = await formManager.GetFormByTemplateIdAsync(id);
+                return View(formViewModel);
+            }
+            return Forbid("Unauthorized Access");
         }
 
         [HttpPost]

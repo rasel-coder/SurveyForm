@@ -6,6 +6,7 @@ using SurveyForm.ViewModels;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Principal;
+using SurveyForm.Utility;
 
 namespace SurveyForm.Manager
 {
@@ -66,11 +67,28 @@ namespace SurveyForm.Manager
             }
         }
 
-        public async Task<List<TemplateViewModel>> GetAllTemplateByUserIdAsync(string id)
+        public async Task<List<TemplateViewModel>> GetAllTemplateByUserIdAsync(string id, string userRole)
         {
             try
             {
-                var templates = await templateRepository.GetAllTemplateByUserId(id);
+                var templates = new List<Template>();
+                if (userRole == Enums.AppRoleEnums.Admin.ToString())
+                    templates = await templateRepository.GetAllTemplates();
+                else
+                    templates = await templateRepository.GetAllTemplateByUserId(id);
+                return mapper.Map<List<TemplateViewModel>>(templates);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<TemplateViewModel>> GetFavouriteTemplatesByUserIdAsync(string templateId)
+        {
+            try
+            {
+                var templates = await templateRepository.GetFavouriteTemplatesByUserId(templateId);
                 return mapper.Map<List<TemplateViewModel>>(templates);
             }
             catch (Exception)

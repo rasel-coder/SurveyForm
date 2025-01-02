@@ -55,7 +55,7 @@
 									{
 										<div class="container mt-2" style="border-radius: 5px; border: 1px solid #d2d2d2;">
 											@{
-												var question = Model.Questions.ElementAt(i);
+												var question = Model.Questions.FirstOrDefault(q => q.QuestionId == Answers[i].QuestionId);
 												@Html.HiddenFor(x => Answers[i].AnswerId)
 												@Html.HiddenFor(x => Answers[i].FormId)
 												@Html.HiddenFor(x => Answers[i].QuestionId)
@@ -70,7 +70,7 @@
 															</p>
 														</div>
 														<div class="col-md-4 d-flex align-items-center justify-content-end">
-															<input type="number" name="@($"Answers[{i}].Marks")" value="@Answers[i].Marks" class="form-control text-center no-spinners" style="width: 50px;" />
+															<input type="number" name="@($"Answers[{i}].Marks")" value="@Answers[i].Marks" min="0" max="@Answers[i].MaximumMarks" class="form-control text-center no-spinners" style="width: 50px;" />
 															<label class="form-label m-2">Out of</label>
 															<input type="number" name="@($"Answers[{i}].MaximumMarks")" value="@Answers[i].MaximumMarks" class="form-control text-center no-spinners" style="width: 50px;" />
 														</div>
@@ -78,15 +78,15 @@
 
 													@if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Single_Line))
 													{
-														<input class="form-control" type="text" value="@Answers[i].AnswerText" name="@($"Answers[{i}].AnswerText")" />
+														<input class="form-control" disabled type="text" value="@Answers[i].AnswerText" name="@($"Answers[{i}].AnswerText")" />
 													}
 													else if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Multiple_Line))
 													{
-														<textarea class="form-control" name="@($"Answers[{i}].AnswerText")" rows="3">@Answers[i].AnswerText</textarea>
+														<textarea class="form-control" disabled name="@($"Answers[{i}].AnswerText")" rows="3">@Answers[i].AnswerText</textarea>
 													}
 													else if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Positive_Integer))
 													{
-														<input class="form-control" type="number" value="@Answers[i].AnswerText" name="@($"Answers[{i}].AnswerText")" />
+														<input class="form-control" disabled type="number" value="@Answers[i].AnswerText" name="@($"Answers[{i}].AnswerText")" />
 													}
 													else if (int.Parse(question.QuestionType) == ((int)Enums.TemplateQuestionTypeEnum.Checkbox))
 													{
@@ -96,6 +96,7 @@
 																   name="Answers[@i].AnswerText"
 																   value="@option.QuestionOptionId"
 																   class="form-check-input"
+																   disabled
 															@(int.Parse(Answers[i].AnswerText) == option.QuestionOptionId ? "checked" : "") />
 
 															<label class="form-label m-0 ms-3">@option.OptionName</label>
@@ -163,7 +164,6 @@
 																<input type="hidden" name="TemplateId" value="@answer.TemplateId" />
 																<input type="hidden" name="FormId" value="@answer.FormId" />
 																<input type="hidden" name="QuestionId" value="@answer.QuestionId" />
-																<label class="form-label m-2">Marks:</label>
 																<input type="number"
 																	   name="Marks"
 																	   value="@answer.Marks"

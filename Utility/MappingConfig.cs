@@ -19,7 +19,7 @@ public class MappingConfig : Profile
         CreateMap<QuestionOption, QuestionOptionViewModel>().ReverseMap();
         CreateMap<Tag, TagViewModel>().ReverseMap();
         CreateMap<Template, TemplateViewModel>().ReverseMap();
-        CreateMap<TemplateSpecificUser, TemplateSpecificUserViewModel>().ReverseMap();
+        CreateMap<FormSpecificUser, FormSpecificUserViewModel>().ReverseMap();
         CreateMap<Topic, TopicViewModel>().ReverseMap();
 
         CreateMap<FormViewModel, TemplateViewModel>().ReverseMap();

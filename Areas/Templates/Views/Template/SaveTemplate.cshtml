@@ -53,6 +53,6 @@
 		updatePlaceholderByTagsCount()
 
 		var usersFromServer = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Users));
-		templateSpecificUsers(usersFromServer);
+		FormSpecificUsers(usersFromServer);
 	</script>
 }

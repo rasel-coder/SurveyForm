@@ -1,4 +1,9 @@
-﻿@model IEnumerable<SurveyForm.ViewModels.QuestionViewModel>
+﻿@using Microsoft.AspNetCore.Identity
+@using SurveyForm.Data
+@using SurveyForm.Utility
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@model IEnumerable<SurveyForm.ViewModels.QuestionViewModel>
 
 @{
 	var questionTypes = new Dictionary<int, string>
@@ -23,8 +28,7 @@
 			<p style="width: 65%;" class="m-0 fw-bold"># Question Title</p>
 			<p style="width: 15%;" class="m-0 fw-bold">Question Type</p>
 			<p style="width: 10%;" class="m-0 fw-bold text-center">Is Displayed</p>
-			@if (ViewBag.TemplateStatus != "Read-Only")
-			{
+			@if (SignInManager.IsSignedIn(User) && (UserManager.GetUserId(User) == ViewBag.UserId || User.IsInRole(Enums.AppRoleEnums.Admin.ToString()))) {
 				<p style="width: 10%;" class="m-0 fw-bold text-end">Actions</p>
 			}
 		</li>
@@ -39,7 +43,7 @@
 				<div style="width: 10%; text-align: center;">
 					<input type="checkbox" @checkbox class="form-check-input" disabled />
 				</div>
-				@if (ViewBag.TemplateStatus != "Read-Only")
+				@if (SignInManager.IsSignedIn(User) && (UserManager.GetUserId(User) == ViewBag.UserId || User.IsInRole(Enums.AppRoleEnums.Admin.ToString())))
 				{
 					<div style="width: 10%">
 						<div class="float-end">

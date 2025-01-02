@@ -73,3 +73,20 @@ function updateAnswer(answerId, marks, maxMarks) {
         }
     });
 }
+
+
+$(document).on('click', '.show-specific-user', function (e) {
+    e.preventDefault();
+    var userId = $(this).data('user-id');
+    $.ajax({
+        url: '/Accounts/Administration/ShowUser?userId=' + userId,
+        type: 'POST',
+        success: function (response) {
+            $('#specific-user-div').html(response);
+            $('#specific-user-modal').modal('show');
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+});

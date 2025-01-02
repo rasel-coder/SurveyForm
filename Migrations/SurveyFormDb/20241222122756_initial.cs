@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SurveyForm.Migrations.SurveyFormDb
 {
     /// <inheritdoc />
-    public partial class initial1 : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,9 +68,10 @@ namespace SurveyForm.Migrations.SurveyFormDb
                     CommentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TemplateId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CommentText = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -89,7 +90,7 @@ namespace SurveyForm.Migrations.SurveyFormDb
                     FormId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TemplateId = table.Column<int>(type: "int", nullable: true),
-                    SubmittedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SubmittedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -103,14 +104,33 @@ namespace SurveyForm.Migrations.SurveyFormDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "FormSpecificUsers",
+                columns: table => new
+                {
+                    FormSpecificUserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TemplateId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FormSpecificUsers", x => x.FormSpecificUserId);
+                    table.ForeignKey(
+                        name: "FK_FormSpecificUsers_Templates_TemplateId",
+                        column: x => x.TemplateId,
+                        principalTable: "Templates",
+                        principalColumn: "TemplateId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Likes",
                 columns: table => new
                 {
                     LikeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TemplateId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    LikedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LikedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -147,25 +167,6 @@ namespace SurveyForm.Migrations.SurveyFormDb
                 });
 
             migrationBuilder.CreateTable(
-                name: "TemplateSpecificUsers",
-                columns: table => new
-                {
-                    TemplateSpecificUserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TemplateId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TemplateSpecificUsers", x => x.TemplateSpecificUserId);
-                    table.ForeignKey(
-                        name: "FK_TemplateSpecificUsers_Templates_TemplateId",
-                        column: x => x.TemplateId,
-                        principalTable: "Templates",
-                        principalColumn: "TemplateId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Answers",
                 columns: table => new
                 {
@@ -173,7 +174,10 @@ namespace SurveyForm.Migrations.SurveyFormDb
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FormId = table.Column<int>(type: "int", nullable: true),
                     QuestionId = table.Column<int>(type: "int", nullable: true),
-                    AnswerText = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    TemplateId = table.Column<int>(type: "int", nullable: false),
+                    AnswerText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Marks = table.Column<int>(type: "int", nullable: true),
+                    MaximumMarks = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -242,6 +246,11 @@ namespace SurveyForm.Migrations.SurveyFormDb
                 column: "TemplateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FormSpecificUsers_TemplateId",
+                table: "FormSpecificUsers",
+                column: "TemplateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Likes_TemplateId",
                 table: "Likes",
                 column: "TemplateId");
@@ -255,11 +264,6 @@ namespace SurveyForm.Migrations.SurveyFormDb
                 name: "IX_Questions_TemplateId",
                 table: "Questions",
                 column: "TemplateId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TemplateSpecificUsers_TemplateId",
-                table: "TemplateSpecificUsers",
-                column: "TemplateId");
         }
 
         /// <inheritdoc />
@@ -272,6 +276,9 @@ namespace SurveyForm.Migrations.SurveyFormDb
                 name: "Comments");
 
             migrationBuilder.DropTable(
+                name: "FormSpecificUsers");
+
+            migrationBuilder.DropTable(
                 name: "Likes");
 
             migrationBuilder.DropTable(
@@ -279,9 +286,6 @@ namespace SurveyForm.Migrations.SurveyFormDb
 
             migrationBuilder.DropTable(
                 name: "Tags");
-
-            migrationBuilder.DropTable(
-                name: "TemplateSpecificUsers");
 
             migrationBuilder.DropTable(
                 name: "Topics");

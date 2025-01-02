@@ -12,7 +12,7 @@ using SurveyForm.Models;
 namespace SurveyForm.Migrations
 {
     [DbContext(typeof(IdentityDbContext))]
-    [Migration("20241203105929_initial")]
+    [Migration("20241222122720_initial")]
     partial class initial
     {
         /// <inheritdoc />

@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using SurveyForm.Data
+@using SurveyForm.Utility
 @inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @model SurveyForm.ViewModels.TemplateViewModel
 
 @{
@@ -15,9 +17,12 @@
 	<li class="nav-item" role="presentation">
 		<a class="nav-link @(ViewBag.ActiveTab == "Template-Question" ? "active" : "")" id="template-question-tab" data-bs-toggle="tab" href="#template-question" role="tab" aria-controls="template-question" aria-selected="false">Questions</a>
 	</li>
-	<li class="nav-item" role="presentation">
-		<a class="nav-link @(ViewBag.ActiveTab == "Template-Form" ? "active" : "")" id="template-form-tab" data-bs-toggle="tab" href="#template-form" role="tab" aria-controls="template-form" aria-selected="false">Forms</a>
-	</li>
+	@if (SignInManager.IsSignedIn(User) && (UserManager.GetUserId(User) == Model.UserId || User.IsInRole(Enums.AppRoleEnums.Admin.ToString())))
+	{
+		<li class="nav-item" role="presentation">
+			<a class="nav-link @(ViewBag.ActiveTab == "Template-Form" ? "active" : "")" id="template-form-tab" data-bs-toggle="tab" href="#template-form" role="tab" aria-controls="template-form" aria-selected="false">Forms</a>
+		</li>
+	}
 </ul>
 
 <div class="tab-content" id="templateTabBody">
@@ -56,13 +61,15 @@
 								<i class='bx bx-like'></i>
 							}
 						</a>
-					} else {
+					}
+					else
+					{
 						<p href="" class="d-flex align-items-center">
 							<span class="fw-bold me-3" style="font-size: 20px;">@Model.Likes.Count()</span>
 							<i class='bx bx-like' title="Please sign in to add to favourite."></i>
 						</p>
 					}
-					
+
 				</div>
 
 				<div class="product-detail">
@@ -70,9 +77,12 @@
 					@Html.Raw(@Model.Description)
 				</div>
 
-				<div class="purchase-info">
-					<a class="btn btn-sm btn-success" href="@Url.Action("Index", "Forms", new { area = "Templates", id = Model.TemplateId })">Start Test <i class='bx bxs-chevrons-right'></i></a>
-				</div>
+				@if (SignInManager.IsSignedIn(User) && (Model.FormSpecificUsers.Any(u => u.UserId == UserManager.GetUserId(User)) || Model.FormSpecificUsers.Any(u => u.UserId == Enums.TemplateSpecificUser.Authenticated_User.ToString()) || User.IsInRole(Enums.AppRoleEnums.Admin.ToString())))
+				{
+					<div class="purchase-info">
+						<a class="btn btn-sm btn-success" href="@Url.Action("Index", "Forms", new { area = "Templates", id = Model.TemplateId })">Start Test <i class='bx bxs-chevrons-right'></i></a>
+					</div>
+				}
 			</div>
 		</div>
 	</div>
@@ -83,11 +93,14 @@
 		</div>
 	</div>
 
-	<div class="tab-pane fade @(ViewBag.ActiveTab == "Template-Form" ? "active show" : "")" id="template-form" role="tabpanel" aria-labelledby="template-form-tab">
-		<div id="question_list_sortable_placeholder">
-			<partial name="~/Areas/Templates/Views/Forms/_FormList.cshtml" model="@Model" />
+	@if (SignInManager.IsSignedIn(User) && (UserManager.GetUserId(User) == Model.UserId || User.IsInRole(Enums.AppRoleEnums.Admin.ToString())))
+	{
+		<div class="tab-pane fade @(ViewBag.ActiveTab == "Template-Form" ? "active show" : "")" id="template-form" role="tabpanel" aria-labelledby="template-form-tab">
+			<div id="question_list_sortable_placeholder">
+				<partial name="~/Areas/Templates/Views/Forms/_FormList.cshtml" model="@Model" />
+			</div>
 		</div>
-	</div>
+	}
 </div>
 
 <h3 class="mt-4">Comments</h3>

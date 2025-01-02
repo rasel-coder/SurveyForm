@@ -66,7 +66,7 @@ public class AccountController : Controller
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     return Redirect(returnUrl);
                 else
-                    return RedirectToAction("Index", "Administration", new { area = "Accounts" });
+                    return RedirectToAction("Index", "Home", new { area = "" });
             }
 
             if (result.IsLockedOut)
@@ -95,7 +95,7 @@ public class AccountController : Controller
         if (ModelState.IsValid)
         {
             var user = mapper.Map<ApplicationUser>(model);
-            user.RoleName = Enums.AppRoleEnums.Admin.ToString();
+            user.RoleName = Enums.AppRoleEnums.User.ToString();
 
             if (model.Password != null)
             {
@@ -103,7 +103,7 @@ public class AccountController : Controller
 
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, Enums.AppRoleEnums.Admin.ToString());
+                    await userManager.AddToRoleAsync(user, Enums.AppRoleEnums.User.ToString());
                     await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true);
                     if (signInManager.IsSignedIn(User))
                     {
@@ -111,10 +111,7 @@ public class AccountController : Controller
                         await userManager.UpdateAsync(user);
                         toastNotification.Success("Registration successful");
 
-                        if (User.IsInRole("Admin"))
-                            return RedirectToAction("Index", "Administration", new { area = "Accounts" });
-                        else
-                            return RedirectToAction("Index", "Home", new { area = "" });
+                        return RedirectToAction("Index", "Home", new { area = "" });
                     }
                 }
                 foreach (var error in result.Errors)

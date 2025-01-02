@@ -83,6 +83,7 @@ function templateTag(templateSpecificTags) {
 
 var inputTags;
 function templateTagSetup(tagsFromServer) {
+    console.log(tagsFromServer);
     inputTags = document.querySelector('input.advance-options'),
         tagify = new Tagify(inputTags, {
             pattern: /^.{0,20}$/,
@@ -98,8 +99,9 @@ function templateTagSetup(tagsFromServer) {
             }
         });
 
-    tagify.on('change', function () {
-        $('#hiddenTags').val(tagify.value.map(tag => tag.value).join(','));
+    tagify.on('change', function (e) {
+        var tagValues = e.detail.tagify.value;
+        $('#hiddenTags').val(tagValues.map(tag => tag.value).join(','));
         updatePlaceholderByTagsCount();
     });
 }
@@ -145,7 +147,7 @@ $(function () {
 // ===================================================================
 
 // ============== Tagify for template specified users ================
-function templateSpecificUsers(usersFromServer) {
+function FormSpecificUsers(usersFromServer) {
     const input = document.querySelector('[name=template_specific_user_tags]');
     tagify = new Tagify(input, {
         whitelist: usersFromServer.map(({ UserId, UserName }) => ({ value: UserId, name: UserName, title: UserName })),
@@ -173,7 +175,7 @@ function templateSpecificUsers(usersFromServer) {
                     UserId: tag.value,
                     UserName: tag.name,
                 }));
-                $('input[name="TemplateSpecificUsers"]').val(JSON.stringify(tagifyValues));
+                $('input[name="FormSpecificUsers"]').val(JSON.stringify(tagifyValues));
             }
         }
     })
@@ -196,24 +198,22 @@ function templateSpecificUsers(usersFromServer) {
 
 
 
+//const imgs = document.querySelectorAll('.img-select a');
+//const imgBtns = [...imgs];
+//let imgId = 1;
 
+//imgBtns.forEach((imgItem) => {
+//    imgItem.addEventListener('click', (event) => {
+//        event.preventDefault();
+//        imgId = imgItem.dataset.id;
+//        slideImage();
+//    });
+//});
 
-const imgs = document.querySelectorAll('.img-select a');
-const imgBtns = [...imgs];
-let imgId = 1;
+//function slideImage() {
+//    const displayWidth = document.querySelector('.img-showcase img:first-child').clientWidth;
 
-imgBtns.forEach((imgItem) => {
-    imgItem.addEventListener('click', (event) => {
-        event.preventDefault();
-        imgId = imgItem.dataset.id;
-        slideImage();
-    });
-});
+//    document.querySelector('.img-showcase').style.transform = `translateX(${- (imgId - 1) * displayWidth}px)`;
+//}
 
-function slideImage() {
-    const displayWidth = document.querySelector('.img-showcase img:first-child').clientWidth;
-
-    document.querySelector('.img-showcase').style.transform = `translateX(${- (imgId - 1) * displayWidth}px)`;
-}
-
-window.addEventListener('resize', slideImage);
+//window.addEventListener('resize', slideImage);

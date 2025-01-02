@@ -27,7 +27,7 @@ public class SurveyFormDbContext : DbContext
 
     public virtual DbSet<Template> Templates { get; set; }
 
-    public virtual DbSet<TemplateSpecificUser> TemplateSpecificUsers { get; set; }
+    public virtual DbSet<FormSpecificUser> FormSpecificUsers { get; set; }
 
     public virtual DbSet<Topic> Topics { get; set; }
 
@@ -78,11 +78,11 @@ public class SurveyFormDbContext : DbContext
             entity.Property(e => e.TopicId).HasMaxLength(100);
         });
 
-        modelBuilder.Entity<TemplateSpecificUser>(entity =>
+        modelBuilder.Entity<FormSpecificUser>(entity =>
         {
-            entity.HasIndex(e => e.TemplateId, "IX_TemplateSpecificUsers_TemplateId");
+            entity.HasIndex(e => e.TemplateId, "IX_FormSpecificUsers_TemplateId");
 
-            entity.HasOne(d => d.Template).WithMany(p => p.TemplateSpecificUsers).HasForeignKey(d => d.TemplateId);
+            entity.HasOne(d => d.Template).WithMany(p => p.FormSpecificUsers).HasForeignKey(d => d.TemplateId);
         });
 
         modelBuilder.Entity<Topic>().HasData(

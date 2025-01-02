@@ -82,6 +82,19 @@ namespace SurveyForm.Manager
             }
         }
 
+        public async Task<List<FormSpecificUserViewModel>> GetFormSpecificUsersAsync(int templateId)
+        {
+            try
+            {
+                var users = await formRepository.GetFormSpecificUsers(templateId);
+                return mapper.Map<List<FormSpecificUserViewModel>>(users);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<int> SaveFormAsync(FormViewModel model, string userId)
         {
             try

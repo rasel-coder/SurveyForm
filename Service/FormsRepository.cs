@@ -39,6 +39,18 @@ namespace SurveyForm.Repository
             }
         }
 
+        public async Task<List<FormSpecificUser>> GetFormSpecificUsers(int templateId)
+        {
+            try
+            {
+                return await context.FormSpecificUsers.Where(x => x.TemplateId == templateId).ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<int> SaveForm(Form model)
         {
             try

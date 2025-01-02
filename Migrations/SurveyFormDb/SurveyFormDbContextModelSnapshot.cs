@@ -36,7 +36,16 @@ namespace SurveyForm.Migrations.SurveyFormDb
                     b.Property<int?>("FormId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Marks")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaximumMarks")
+                        .HasColumnType("int");
+
                     b.Property<int?>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TemplateId")
                         .HasColumnType("int");
 
                     b.HasKey("AnswerId");
@@ -57,14 +66,17 @@ namespace SurveyForm.Migrations.SurveyFormDb
                     b.Property<string>("CommentText")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("TemplateId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CommentId");
 
@@ -81,20 +93,41 @@ namespace SurveyForm.Migrations.SurveyFormDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FormId"));
 
-                    b.Property<string>("SubmittedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("SubmittedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("TemplateId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("FormId");
 
                     b.HasIndex(new[] { "TemplateId" }, "IX_Forms_TemplateId");
 
                     b.ToTable("Forms");
+                });
+
+            modelBuilder.Entity("SurveyForm.Data.FormSpecificUser", b =>
+                {
+                    b.Property<int>("FormSpecificUserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FormSpecificUserId"));
+
+                    b.Property<int?>("TemplateId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("FormSpecificUserId");
+
+                    b.HasIndex(new[] { "TemplateId" }, "IX_FormSpecificUsers_TemplateId");
+
+                    b.ToTable("FormSpecificUsers");
                 });
 
             modelBuilder.Entity("SurveyForm.Data.Like", b =>
@@ -105,14 +138,14 @@ namespace SurveyForm.Migrations.SurveyFormDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LikeId"));
 
-                    b.Property<DateTime?>("LikedAt")
+                    b.Property<DateTime?>("LikedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("TemplateId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LikeId");
 
@@ -267,27 +300,6 @@ namespace SurveyForm.Migrations.SurveyFormDb
                     b.ToTable("Templates");
                 });
 
-            modelBuilder.Entity("SurveyForm.Data.TemplateSpecificUser", b =>
-                {
-                    b.Property<int>("TemplateSpecificUserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TemplateSpecificUserId"));
-
-                    b.Property<int?>("TemplateId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TemplateSpecificUserId");
-
-                    b.HasIndex(new[] { "TemplateId" }, "IX_TemplateSpecificUsers_TemplateId");
-
-                    b.ToTable("TemplateSpecificUsers");
-                });
-
             modelBuilder.Entity("SurveyForm.Data.Topic", b =>
                 {
                     b.Property<int>("TopicId")
@@ -348,6 +360,15 @@ namespace SurveyForm.Migrations.SurveyFormDb
                     b.Navigation("Template");
                 });
 
+            modelBuilder.Entity("SurveyForm.Data.FormSpecificUser", b =>
+                {
+                    b.HasOne("SurveyForm.Data.Template", "Template")
+                        .WithMany("FormSpecificUsers")
+                        .HasForeignKey("TemplateId");
+
+                    b.Navigation("Template");
+                });
+
             modelBuilder.Entity("SurveyForm.Data.Like", b =>
                 {
                     b.HasOne("SurveyForm.Data.Template", "Template")
@@ -373,15 +394,6 @@ namespace SurveyForm.Migrations.SurveyFormDb
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("SurveyForm.Data.TemplateSpecificUser", b =>
-                {
-                    b.HasOne("SurveyForm.Data.Template", "Template")
-                        .WithMany("TemplateSpecificUsers")
-                        .HasForeignKey("TemplateId");
-
-                    b.Navigation("Template");
-                });
-
             modelBuilder.Entity("SurveyForm.Data.Form", b =>
                 {
                     b.Navigation("Answers");
@@ -391,13 +403,13 @@ namespace SurveyForm.Migrations.SurveyFormDb
                 {
                     b.Navigation("Comments");
 
+                    b.Navigation("FormSpecificUsers");
+
                     b.Navigation("Forms");
 
                     b.Navigation("Likes");
 
                     b.Navigation("Questions");
-
-                    b.Navigation("TemplateSpecificUsers");
                 });
 #pragma warning restore 612, 618
         }

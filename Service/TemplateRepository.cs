@@ -60,16 +60,30 @@ namespace SurveyForm.Repository
             }
         }
 
+        public async Task<List<Template>> GetAllTemplates()
+        {
+            try
+            {
+                return await context.Templates.ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<List<Template>> GetAllTemplateByUserId(string id)
         {
             try
             {
-                var userIds = new[] { id, Enums.TemplateSpecificUser.Authenticated_User.ToString() };
-                var templateUsers = await context.TemplateSpecificUsers
-                    .Include(x => x.Template)
-                    .Where(x => userIds.Contains(x.UserId))
-                    .ToListAsync();
-                return templateUsers.Select(x => x.Template).ToList();
+                //var userIds = new[] { id, Enums.TemplateSpecificUser.Authenticated_User.ToString() };
+                //var templateUsers = await context.FormSpecificUsers
+                //    .Include(x => x.Template)
+                //    .Where(x => x.UserId == id)
+                //    .ToListAsync();
+                //return templateUsers.Select(x => x.Template).ToList();
+
+                return await context.Templates.Where(x => x.UserId == id).ToListAsync();
             }
             catch (Exception)
             {
@@ -82,8 +96,8 @@ namespace SurveyForm.Repository
             try
             {
                 return await context.Templates
-                    .Include(x => x.TemplateSpecificUsers)
-                    .Include(x => x.Questions.OrderBy(x => x.DisplayOrder))
+                    .Include(x => x.FormSpecificUsers)
+                    .Include(x => x.Questions.Where(x => x.IsDisplayed == true).OrderBy(x => x.DisplayOrder))
                     .Include(x => x.Likes)
                     .Include(x => x.Comments.OrderByDescending(x => x.CreatedDate))
                     .Include(x => x.Forms)
@@ -173,8 +187,8 @@ namespace SurveyForm.Repository
         {
             try
             {
-                var templateUsers = await context.TemplateSpecificUsers.Where(x => x.TemplateId == model.TemplateId).ToListAsync();
-                context.TemplateSpecificUsers.RemoveRange(templateUsers);
+                var templateUsers = await context.FormSpecificUsers.Where(x => x.TemplateId == model.TemplateId).ToListAsync();
+                context.FormSpecificUsers.RemoveRange(templateUsers);
 
                 context.Templates.Update(model);
                 await context.SaveChangesAsync();
@@ -243,6 +257,12 @@ namespace SurveyForm.Repository
                 await context.Likes.AddAsync(like);
 
             return await context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<List<Template>> GetFavouriteTemplatesByUserId(string userId)
+        {
+            var likes = await context.Likes.Where(x => x.UserId == userId).Select(x => x.TemplateId).ToListAsync();
+            return await context.Templates.Where(x => likes.Contains(x.TemplateId)).ToListAsync();
         }
 
         public async Task<List<Template>> MostPopularTemplate()

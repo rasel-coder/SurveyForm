@@ -9,7 +9,7 @@ public partial class Template
         Forms = new List<Form>();
         Likes = new List<Like>();
         Questions = new List<Question>();
-        TemplateSpecificUsers = new List<TemplateSpecificUser>();
+        FormSpecificUsers = new List<FormSpecificUser>();
 
     }
     public int TemplateId { get; set; }
@@ -39,5 +39,5 @@ public partial class Template
 
     public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 
-    public virtual ICollection<TemplateSpecificUser> TemplateSpecificUsers { get; set; } = new List<TemplateSpecificUser>();
+    public virtual ICollection<FormSpecificUser> FormSpecificUsers { get; set; } = new List<FormSpecificUser>();
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace SurveyForm.ViewModels;
 
-public partial class TemplateSpecificUserViewModel
+public partial class FormSpecificUserViewModel
 {
-    public int TemplateSpecificUserId { get; set; }
+    public int FormSpecificUserId { get; set; }
 
     public string UserId { get; set; } = null!;
     public string UserName { get; set; } = null!;

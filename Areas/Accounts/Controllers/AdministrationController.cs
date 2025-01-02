@@ -8,11 +8,12 @@ using SurveyForm.Data;
 using SurveyForm.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using SurveyForm.Utility;
 
 namespace SurveyForm.Areas.Accounts.Controllers;
 
 [Area(nameof(Accounts))]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class AdministrationController : Controller
 {
     private readonly UserManager<ApplicationUser> userManager;
@@ -69,6 +70,14 @@ public class AdministrationController : Controller
                 await UnblockUsers(users);
                 break;
 
+            case "add-to-admin":
+                await AddToAdmin(users);
+                break;
+
+            case "remove-from-admin":
+                await RemoveFromAdmin(users);
+                break;
+
             default:
                 toastNotification.Error("Unknown action");
                 break;
@@ -107,6 +116,41 @@ public class AdministrationController : Controller
             var result = await userManager.SetLockoutEndDateAsync(user, null);
         }
         toastNotification.Success("Selected users are unblocked");
+    }
+
+    [HttpPost]
+    public async Task AddToAdmin(List<ApplicationUser> users)
+    {
+        foreach (var user in users)
+        {
+            await userManager.RemoveFromRoleAsync(user, Enums.AppRoleEnums.User.ToString());
+            await userManager.AddToRoleAsync(user, Enums.AppRoleEnums.Admin.ToString());
+
+            user.RoleName = Enums.AppRoleEnums.Admin.ToString();
+            await userManager.UpdateAsync(user);
+        }
+        toastNotification.Success("Selected users are marked as Admin");
+    }
+
+    [HttpPost]
+    public async Task RemoveFromAdmin(List<ApplicationUser> users)
+    {
+        foreach (var user in users)
+        {
+            await userManager.RemoveFromRoleAsync(user, Enums.AppRoleEnums.Admin.ToString());
+            await userManager.AddToRoleAsync(user, Enums.AppRoleEnums.User.ToString());
+
+            user.RoleName = Enums.AppRoleEnums.User.ToString();
+            await userManager.UpdateAsync(user);
+        }
+        toastNotification.Success("Selected users are marked as User");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ShowUser(string userId)
+    {
+        var user = await userManager.FindByIdAsync(userId);
+        return PartialView("~/Areas/Accounts/Views/Administration/_ViewUser.cshtml", user);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

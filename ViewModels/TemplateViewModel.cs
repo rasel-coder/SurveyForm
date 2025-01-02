@@ -15,7 +15,6 @@ public partial class TemplateViewModel
         Forms = new List<FormViewModel>();
         Likes = new List<LikeViewModel>();
         Questions = new List<QuestionViewModel>();
-        TemplateSpecificUsers = new List<TemplateSpecificUserViewModel>();
     }
 
     public int TemplateId { get; set; }
@@ -52,6 +51,6 @@ public partial class TemplateViewModel
 
     public virtual IEnumerable<QuestionViewModel> Questions { get; set; } = new List<QuestionViewModel>();
 
-    public virtual IEnumerable<TemplateSpecificUserViewModel> TemplateSpecificUsers { get; set; } = new List<TemplateSpecificUserViewModel>();
+    public virtual IEnumerable<FormSpecificUserViewModel> FormSpecificUsers { get; set; } = null;
 
 }
