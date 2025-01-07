@@ -172,20 +172,28 @@ public class TemplateController : Controller
     [HttpPost]
     public IActionResult UploadImage(IFormFile file)
     {
-        if (file != null && file.Length > 0)
+        try
         {
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
-            Directory.CreateDirectory(uploadsFolder);
-            var filePath = Path.Combine(uploadsFolder, file.FileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            if (file != null && file.Length > 0)
             {
-                file.CopyTo(stream);
+                var uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "uploads");
+                Directory.CreateDirectory(uploadsFolder);
+                var filePath = Path.Combine(uploadsFolder, file.FileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+                return Json(new { filePath = "/uploads/" + file.FileName });
             }
-            return Json(new { filePath = "/uploads/" + file.FileName });
+            return BadRequest("Invalid file.");
         }
-        return BadRequest("Invalid file.");
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Internal Server Error");
+        }
     }
+
 
     [HttpGet]
     [AllowAnonymous]

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SurveyForm.Utility;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Xml.Linq;
+using SurveyForm.ViewModels;
 
 namespace SurveyForm.Repository
 {
@@ -20,7 +21,7 @@ namespace SurveyForm.Repository
         {
             try
             {
-                return await context.Templates.OrderByDescending(x => x.TemplateId).ToListAsync();
+                return await context.Templates.Include(x => x.Forms).OrderByDescending(x => x.TemplateId).ToListAsync();
             }
             catch (Exception)
             {
@@ -92,6 +93,25 @@ namespace SurveyForm.Repository
         }
 
         public async Task<Template> GetTemplateById(int id)
+        {
+            try
+            {
+                return await context.Templates
+                    .Include(x => x.FormSpecificUsers)
+                    .Include(x => x.Questions.OrderBy(x => x.DisplayOrder))
+                    .Include(x => x.Likes)
+                    .Include(x => x.Comments.OrderByDescending(x => x.CreatedDate))
+                    .Include(x => x.Forms)
+                        .ThenInclude(x => x.Answers)
+                    .Where(x => x.TemplateId == id).FirstOrDefaultAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<Template> GetTemplateByIdWithIsDisplayedQuestion(int id)
         {
             try
             {

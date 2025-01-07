@@ -42,7 +42,6 @@ public partial class TemplateViewModel
 
     public virtual List<List<AnswerViewModel>> Aggrigations { get; set; } = new List<List<AnswerViewModel>>();
 
-    public virtual IEnumerable<TemplateViewModel> MostPopularTemplates { get; set; } = new List<TemplateViewModel>();
     public virtual IEnumerable<CommentViewModel> Comments { get; set; } = new List<CommentViewModel>();
 
     public virtual IEnumerable<FormViewModel> Forms { get; set; } = new List<FormViewModel>();

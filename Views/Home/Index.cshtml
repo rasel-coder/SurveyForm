@@ -1,4 +1,4 @@
-﻿@model List<SurveyForm.ViewModels.TemplateViewModel>
+﻿@model SurveyForm.ViewModels.TemplatePageViewModel
 
 @{
     ViewData["Title"] = "Home Page";
@@ -8,8 +8,15 @@
     <i class='bx bx-search d-flex align-items-center' style="font-size: 30px; font-weight: bold;"></i>
     <input type="text" id="searchBox" class="form-control ms-2 w-25" style="background: #f1f1f1;" placeholder="Search templates..." />
 </div>
+
+<h3>LATEST TEMPLATES</h3>
 <div id="results">
-    <partial name="_LatestTemplate" model="Model" />
+    <partial name="_LatestTemplate" model="Model.LatestTemplates" />
+</div>
+
+<h3>POPULAR TEMPLATES</h3>
+<div id="">
+    <partial name="_PopularTemplate" model="Model.PopularTemplates" />
 </div>
 
 @section Scripts {

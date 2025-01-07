@@ -19,4 +19,6 @@ public partial class TemplatePageViewModel
 
     public virtual List<TemplateViewModel> MyTemplates { get; set; } = new List<TemplateViewModel>();
     public virtual List<TemplateViewModel> FavouriteTemplates { get; set; } = new List<TemplateViewModel>();
+    public virtual List<TemplateViewModel> LatestTemplates { get; set; } = new List<TemplateViewModel>();
+    public virtual List<TemplateViewModel> PopularTemplates { get; set; } = new List<TemplateViewModel>();
 }

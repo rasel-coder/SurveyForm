@@ -1,7 +1,10 @@
 using System.Diagnostics;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SurveyForm.Manager;
 using SurveyForm.Models;
+using SurveyForm.Repository;
+using SurveyForm.ViewModels;
 
 namespace SurveyForm.Controllers
 {
@@ -19,8 +22,18 @@ namespace SurveyForm.Controllers
 
         public async Task<IActionResult> Index()
         {
+            TemplatePageViewModel template = new TemplatePageViewModel();
+
             var templates = await _templateManager.GettAllTemplateAsync();
-            return View(templates);
+            template.LatestTemplates = templates;
+            template.PopularTemplates = templates.Select(template =>
+                {
+                    template.TemplateCount = template.Forms.Count();
+                    return template;
+                })
+                .OrderByDescending(template => template.TemplateCount)
+                .Take(5).ToList();
+            return View(template);
         }
 
         public IActionResult Privacy()
